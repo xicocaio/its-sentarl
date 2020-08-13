@@ -10,6 +10,8 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
+from stable_baselines3.common.env_checker import check_env
+
 
 def main(**kwargs):
     test_module = kwargs.get('test') if 'env' in kwargs else 'all'  # allow: all, gen_csv
@@ -23,6 +25,8 @@ def main(**kwargs):
             features=[],
             # features=[('avg-sent', 5)],
             use_discrete_actions=True)
+
+        check_env(env)
 
         observation = env.reset()
 

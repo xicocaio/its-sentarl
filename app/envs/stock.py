@@ -24,12 +24,13 @@ class StockExchangeEnv(ExchangeEnv):
         self._pivot_window_size = pivot_window_size
         self._use_discrete_actions = use_discrete_actions
         self._prices, self._state_features, self._window_sizes = self._process_data(pivot_price_feature, features)
-        self._shape = (self._pivot_window_size, self._state_features.shape[1])
+        self._shape = (np.sum(self._window_sizes),)
 
         # action and state spaces
         np_type = np.int64 if self._use_discrete_actions else np.float32
         action_space = spaces.Box(low=Actions.Short.value, high=Actions.Long.value, shape=(1,), dtype=np_type)
         observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=self._shape, dtype=np.float32)
+        # observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=[10,], dtype=np.float32)
 
         start_t = self._pivot_window_size
         end_t = len(self._prices) - 1
