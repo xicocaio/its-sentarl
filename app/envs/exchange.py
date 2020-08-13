@@ -96,8 +96,8 @@ class ExchangeEnv(gym.Env):
     def _plot_history(self):
         window_ticks = np.arange(len(self._reward_history))
 
-        print(self._reward_history)
-        print(self._action_history)
+        # print(self._reward_history)
+        # print(self._action_history)
 
         fig, ax1 = plt.subplots()
 
