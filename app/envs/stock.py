@@ -27,8 +27,10 @@ class StockExchangeEnv(ExchangeEnv):
         self._shape = (np.sum(self._window_sizes),)
 
         # action and state spaces
-        np_type = np.int64 if self._use_discrete_actions else np.float32
-        action_space = spaces.Box(low=Actions.Short.value, high=Actions.Long.value, shape=(1,), dtype=np_type)
+        # np_type = np.int64 if self._use_discrete_actions else np.float32
+        action_space = spaces.Discrete(len(Actions)) if self._use_discrete_actions else spaces.Box(
+            low=Actions.Short.signal, high=Actions.Long.signal, shape=(1,), dtype=np.float32)
+        # action_space = spaces.Box(low=Actions.Short.value, high=Actions.Long.value, shape=(1,), dtype=np_type)
         observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=self._shape, dtype=np.float32)
         # observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=[10,], dtype=np.float32)
 
@@ -60,12 +62,12 @@ class StockExchangeEnv(ExchangeEnv):
         price_diff = self._prices[self._current_t] - self._prices[self._last_trade_tick]
 
         # converting None actions to Neutral = 0
-        action = action if action else Actions.Neutral.value
-        past_action = self._action_history[-1] if self._action_history[-1] else Actions.Neutral.value
+        action = action if action else Actions.Neutral
+        past_action = self._action_history[-1] if self._action_history[-1] else Actions.Neutral
 
         # phi * [At-1*zt -c*|At - At-1|]
         if self._use_discrete_actions:
-            step_reward = self._phi * (past_action * price_diff - self._c * abs(action - past_action))
+            step_reward = self._phi * (past_action.value * price_diff - self._c * abs(action.value - past_action.value))
         else:
             NotImplementedError
 
@@ -81,5 +83,15 @@ class StockExchangeEnv(ExchangeEnv):
         return inv_state_features.T[mask.T]
 
     # in our case the last action is equivalent to a noop = None
-    def _process_last_action(self, last_action):
-        return None
+    def _process_action(self, action, last_step):
+        if last_step:
+            return None
+        else:
+            return {
+                0: Actions.Short,
+                1: Actions.Neutral,
+                2: Actions.Long
+            }[action]
+
+    def _update_profit(self, action):
+        self._total_profit = self._total_reward

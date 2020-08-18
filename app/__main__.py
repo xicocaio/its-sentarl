@@ -33,7 +33,27 @@ def main(**kwargs):
     if test_module == 'env' or test_module == 'all':
         check_env(env_maker())
 
-    if test_module == 'agent' or test_module == 'all':
+    if test_module == 'random':
+        env = env_maker()
+
+        observation = env.reset()
+        while True:
+            action = env.action_space.sample()
+            # action = 1
+            # obs, reward, done, info = env.step(action)
+            obs, reward, done, info = env.step(action)
+            # print(action)
+            # print("obs [price diff]: {}".format(obs))
+            # env.render()
+            if done:
+                print("info:", info)
+                break
+
+        # plt.cla()
+        env.render()
+        plt.show()
+
+    if test_module == 'model' or test_module == 'all':
         env = DummyVecEnv([env_maker])
 
         # device = 'cpu'
@@ -52,8 +72,9 @@ def main(**kwargs):
             observation = observation[np.newaxis, ...]
 
             action, _states = model.predict(observation)
-            action = [np.squeeze(action)]
-            observation, reward, done, info = env.step(action)
+            # action = [np.squeeze(action]
+            observation, reward, done, info = env.step(action[0])
+            print(info)
 
             # env.render()
             if done:
