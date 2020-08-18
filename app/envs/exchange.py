@@ -24,6 +24,10 @@ class ExchangeEnv(gym.Env):
 
         # historic data
         self.history = {}
+        self._action_value_history = start_t * [None]
+
+        # agent's performance market metrics
+        self._total_profit = 0.
 
         # simulation params
         self._start_t = start_t
@@ -39,23 +43,23 @@ class ExchangeEnv(gym.Env):
 
         last_step = True if self._current_t == self._end_t else False
 
-        self._action = self._process_action(action, last_step)
+        self._action_value = self._get_action_value(action, last_step)
 
-        step_reward = self._calculate_reward(self._action)
+        step_reward = self._calculate_reward(self._action_value)
+        self._update_profit(self._action_value)
 
         observation = self._get_observation()
 
         self._last_trade_tick = self._current_t
 
-        self._action_history.append(self._action)
+        self._action_value_history.append(self._action_value)
         self._reward_history.append(step_reward)
 
         self._total_reward += step_reward
-        self._update_profit(self._action)
 
         info = dict(
             total_reward=self._total_reward,
-            action_value=self._action.value if self._action else self._action,
+            action_value=self._action_value,
             total_profit=self._total_profit,
         )
 
@@ -73,10 +77,10 @@ class ExchangeEnv(gym.Env):
         self._episode_over = False
         self._current_t = self._start_t
         self._last_trade_tick = self._current_t - 1
-        self._action = None
+        self._action_value = None
         self._total_reward = 0.
         self._total_profit = 0.
-        self._action_history = self._start_t * [None]
+        self._action_value_history = self._start_t * [None]
         self._reward_history = self._start_t * [None]
         self._first_rendering = True
 
@@ -94,13 +98,13 @@ class ExchangeEnv(gym.Env):
     def _process_data(self):
         raise NotImplementedError
 
-    def _calculate_reward(self, action):
+    def _calculate_reward(self, action_value):
         raise NotImplementedError
 
     def _get_observation(self):
         return NotImplementedError
 
-    def _process_action(self, action, last_step):
+    def _get_action_value(self, action, last_step):
         return NotImplementedError
 
     def _plot_history(self):
@@ -119,10 +123,10 @@ class ExchangeEnv(gym.Env):
         neutral_ticks = []
         for i, tick in enumerate(window_ticks):
             # actions history plotting
-            if self._action_history[i]:
-                if self._action_history[i].value < 0:
+            if self._action_value_history[i]:
+                if self._action_value_history[i] < 0:
                     short_ticks.append(tick)
-                elif self._action_history[i].value > 0:
+                elif self._action_value_history[i] > 0:
                     long_ticks.append(tick)
                 else:
                     neutral_ticks.append(tick)
@@ -157,5 +161,5 @@ class ExchangeEnv(gym.Env):
     def _convert_action(self, action):
         return NotImplementedError
 
-    def _update_profit(self, action):
+    def _update_profit(self, action_value):
         raise NotImplementedError

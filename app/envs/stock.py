@@ -15,7 +15,8 @@ class Actions(Enum):
 
 # TODO: add tuple arg for determining feature and its window size
 class StockExchangeEnv(ExchangeEnv):
-    def __init__(self, df, frame_bound, pivot_window_size, pivot_price_feature, features, use_discrete_actions):
+    def __init__(self, df, frame_bound, pivot_window_size, pivot_price_feature, features, use_discrete_actions,
+                 reward_type, initial_wealth, transaction_cost):
         assert df.ndim == 2
         assert len(frame_bound) == 2  # checking if the tuple is size 2
 
@@ -26,22 +27,29 @@ class StockExchangeEnv(ExchangeEnv):
         self._prices, self._state_features, self._window_sizes = self._process_data(pivot_price_feature, features)
         self._shape = (np.sum(self._window_sizes),)
 
-        # action and state spaces
-        # np_type = np.int64 if self._use_discrete_actions else np.float32
+        self._reward_type = reward_type
+
+        # market characteristics #
+        self._tc = transaction_cost
+        if self._reward_type == 'additive':
+            self._shares_amount = initial_wealth
+        elif self._reward_type == 'multiplicative':
+            self._initial_wealth = initial_wealth
+        else:
+            raise ValueError('reward_type: {} not supported'.format(self._reward_type))
+
+        # action and state spaces #
+
+        # if reward type if multiplicative system forces continuous actions
+        self._use_discrete_actions = use_discrete_actions and self._reward_type == 'additive'
         action_space = spaces.Discrete(len(Actions)) if self._use_discrete_actions else spaces.Box(
-            low=Actions.Short.signal, high=Actions.Long.signal, shape=(1,), dtype=np.float32)
-        # action_space = spaces.Box(low=Actions.Short.value, high=Actions.Long.value, shape=(1,), dtype=np_type)
-        observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=self._shape, dtype=np.float32)
-        # observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=[10,], dtype=np.float32)
+            low=Actions.Short.value, high=Actions.Long.value, shape=(1,), dtype=np.float64)
+        observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=self._shape, dtype=np.float64)
 
         start_t = self._pivot_window_size
         end_t = len(self._prices) - 1
 
         super().__init__(action_space, observation_space, start_t, end_t)
-
-        # market characteristics
-        self._phi = 1  # number of shares
-        self._c = 0.001  # trading cost (TC)
 
     def _process_data(self, pivot_price_feature, features):
         # TODO start and end should validated and assgned in init, based on frame_bound
@@ -58,18 +66,22 @@ class StockExchangeEnv(ExchangeEnv):
 
         return prices, state_features, window_sizes
 
-    def _calculate_reward(self, action):
-        price_diff = self._prices[self._current_t] - self._prices[self._last_trade_tick]
-
+    def _calculate_reward(self, action_value):
         # converting None actions to Neutral = 0
-        action = action if action else Actions.Neutral
-        past_action = self._action_history[-1] if self._action_history[-1] else Actions.Neutral
+        action = action_value if action_value else Actions.Neutral.value
+        past_action = self._action_value_history[-1] if self._action_value_history[-1] else Actions.Neutral.value
 
-        # phi * [At-1*zt -c*|At - At-1|]
-        if self._use_discrete_actions:
-            step_reward = self._phi * (past_action.value * price_diff - self._c * abs(action.value - past_action.value))
+        if self._reward_type == 'additive':
+            # reward = shares * [At-1*zt - tc*|At - At-1|], where zt = pt - pt-1
+            price_diff = self._prices[self._current_t] - self._prices[self._last_trade_tick]
+            step_reward = self._shares_amount * (past_action * price_diff - self._tc * abs(action - past_action))
         else:
-            NotImplementedError
+            # reward = wealth * (zt * At-1) * (1 - c*|At - At-1|) - wealth, where zt = (pt/pt-1) - 1
+            wealth = self._initial_wealth + self._total_profit
+            price_ratio = self._prices[self._current_t] / self._prices[self._last_trade_tick] - 1
+            new_wealth = wealth * (1 + price_ratio * past_action) * (1 - self._tc * abs(action - past_action))
+
+            step_reward = new_wealth - wealth
 
         return step_reward
 
@@ -83,15 +95,24 @@ class StockExchangeEnv(ExchangeEnv):
         return inv_state_features.T[mask.T]
 
     # in our case the last action is equivalent to a noop = None
-    def _process_action(self, action, last_step):
+    def _get_action_value(self, action, last_step):
         if last_step:
             return None
         else:
-            return {
-                0: Actions.Short,
-                1: Actions.Neutral,
-                2: Actions.Long
-            }[action]
+            if self._use_discrete_actions:
+                return {
+                    0: Actions.Short.value,
+                    1: Actions.Neutral.value,
+                    2: Actions.Long.value
+                }[action]
+            else:
+                # the used formulation of multiplicative reward requires values in range [0,1]
+                # however, stables baseline recommends using simmetric actions, and that why we adjust it here
+                # and not on initialization
+                if self._reward_type == 'multiplicative':
+                    return (action[0] - Actions.Short.value) / (Actions.Long.value - Actions.Short.value)
 
-    def _update_profit(self, action):
-        self._total_profit = self._total_reward
+                return action[0]  # extracting scalar (np.float64) from single item np array
+
+    def _update_profit(self, action_value):
+        self._total_profit += self._calculate_reward(action_value)

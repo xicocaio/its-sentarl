@@ -29,7 +29,10 @@ register(
         'pivot_window_size': 10,
         'pivot_price_feature': 'Close',
         'features': [('avg-sent', 5)],
-        'use_discrete_actions': True
+        'use_discrete_actions': True,
+        'reward_type': 'additive',
+        'initial_wealth': 1,
+        'transaction_cost': 0.001
     }
 )
 
@@ -42,6 +45,9 @@ register(
         'pivot_window_size': 10,
         'pivot_price_feature': 'Close',
         'features': [('avg-sent', 5)],
-        'use_discrete_actions': True
+        'use_discrete_actions': True,
+        'reward_type': 'additive',
+        'initial_wealth': 1,
+        'transaction_cost': 0.001
     }
 )

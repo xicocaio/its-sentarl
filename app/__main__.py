@@ -12,7 +12,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 from stable_baselines3.common.env_checker import check_env
-from stable_baselines3 import A2C, SAC
+from stable_baselines3 import A2C, SAC, DQN
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.cmd_util import make_vec_env
 
@@ -28,9 +28,13 @@ def main(**kwargs):
         pivot_price_feature='Close',
         # features=[],
         features=[('avg-sent', 5)],
-        use_discrete_actions=True)
+        use_discrete_actions=True,
+        reward_type='additive',
+        initial_wealth=1,
+        transaction_cost=0.001)
 
     if test_module == 'env' or test_module == 'all':
+        # when debugging values do not forget that check_env runs env methods
         check_env(env_maker())
 
     if test_module == 'random':
@@ -42,8 +46,7 @@ def main(**kwargs):
             # action = 1
             # obs, reward, done, info = env.step(action)
             obs, reward, done, info = env.step(action)
-            # print(action)
-            # print("obs [price diff]: {}".format(obs))
+
             # env.render()
             if done:
                 print("info:", info)
@@ -63,6 +66,9 @@ def main(**kwargs):
         # policy_kwargs = dict(net_arch=[64, 'lstm', dict(vf=[128, 128, 128], pi=[64, 64])])
         model = A2C('MlpPolicy', env, device=device, verbose=1)
         model.learn(total_timesteps=1000)
+
+        # model = DQN('MlpPolicy', env, device=device, verbose=1)
+        # model.learn(total_timesteps=1000, log_interval=4)
 
         ### TESTING ###
         env = env_maker()
@@ -84,9 +90,6 @@ def main(**kwargs):
         # plt.cla()
         env.render()
         plt.show()
-
-    else:
-        print('Test --{}: {}'.format(test_module, 'Nothing implemented'))
 
 
 if __name__ == '__main__':
