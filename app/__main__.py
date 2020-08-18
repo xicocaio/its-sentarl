@@ -4,6 +4,7 @@ import gym
 from envs import StockExchangeEnv
 
 import pandas as pd
+import numpy as np
 
 import matplotlib
 
@@ -11,13 +12,28 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 from stable_baselines3.common.env_checker import check_env
+from stable_baselines3 import A2C, SAC
+from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.cmd_util import make_vec_env
 
 
 def main(**kwargs):
     test_module = kwargs.get('test') if 'env' in kwargs else 'all'  # allow: all, gen_csv
 
+    env_maker = lambda: gym.make(
+        'stock_exchange-v0',
+        frame_bound=(50, 100),
+        pivot_window_size=10,
+        pivot_price_feature='Close',
+        features=[],
+        # features=[('avg-sent', 5)],
+        use_discrete_actions=True)
+
     if test_module == 'env' or test_module == 'all':
-        env = gym.make(
+        check_env(env_maker())
+
+    if test_module == 'agent' or test_module == 'all':
+        env_maker = lambda: gym.make(
             'stock_exchange-v0',
             frame_bound=(50, 100),
             pivot_window_size=10,
@@ -26,14 +42,26 @@ def main(**kwargs):
             # features=[('avg-sent', 5)],
             use_discrete_actions=True)
 
-        check_env(env)
+        env = DummyVecEnv([env_maker])
 
+        # device = 'cpu'
+        device = 'cuda'
+
+        ### Training ###
+        # policy_kwargs = dict(net_arch=[64, 'lstm', dict(vf=[128, 128, 128], pi=[64, 64])])
+        model = A2C('MlpPolicy', env, device=device, verbose=1)
+        model.learn(total_timesteps=1000)
+
+        ### TESTING ###
+        env = env_maker()
         observation = env.reset()
 
         while True:
-            action = env.action_space.sample()
+            observation = observation[np.newaxis, ...]
 
-            obs, reward, done, info = env.step(action)
+            action, _states = model.predict(observation)
+            action = [np.squeeze(action)]
+            observation, reward, done, info = env.step(action)
 
             # env.render()
             if done:
