@@ -18,7 +18,7 @@ def load_dataset(name, index_name):
 
 
 STOCKS_AAPL = load_dataset('AAPL.USUSD_Candlestick_1_Hour_BID_19.06.2017-13.03.2020', 'datetime')
-# STOCKS_AAPL_SENT = load_dataset('ready_aapl_hour_duska_2018-01-02_2019-12-31', 'datetime')
+STOCKS_AAPL_SENT = load_dataset('ready_aapl_hour_duska_2018-01-02_2019-12-31', 'datetime')
 
 register(
     id='stock_exchange-v0',
@@ -33,15 +33,15 @@ register(
     }
 )
 
-# register(
-#     id='stock_exchange-v0',
-#     entry_point='envs:StockExchangeEnv',
-#     kwargs={
-#         'df': STOCKS_AAPL_SENT,
-#         'frame_bound': (50, 100),
-#         'pivot_window_size': 10,
-#         'pivot_price_feature': 'Close',
-#         'features': [('avg-sent', 5)],
-#         'use_discrete_actions': True
-#     }
-# )
+register(
+    id='stock_exchange_sent-v0',
+    entry_point='envs:StockExchangeEnv',
+    kwargs={
+        'df': STOCKS_AAPL_SENT,
+        'frame_bound': (50, 100),
+        'pivot_window_size': 10,
+        'pivot_price_feature': 'Close',
+        'features': [('avg-sent', 5)],
+        'use_discrete_actions': True
+    }
+)

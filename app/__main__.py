@@ -21,27 +21,19 @@ def main(**kwargs):
     test_module = kwargs.get('test') if 'env' in kwargs else 'all'  # allow: all, gen_csv
 
     env_maker = lambda: gym.make(
-        'stock_exchange-v0',
+        # 'stock_exchange-v0',
+        'stock_exchange_sent-v0',
         frame_bound=(50, 100),
         pivot_window_size=10,
         pivot_price_feature='Close',
-        features=[],
-        # features=[('avg-sent', 5)],
+        # features=[],
+        features=[('avg-sent', 5)],
         use_discrete_actions=True)
 
     if test_module == 'env' or test_module == 'all':
         check_env(env_maker())
 
     if test_module == 'agent' or test_module == 'all':
-        env_maker = lambda: gym.make(
-            'stock_exchange-v0',
-            frame_bound=(50, 100),
-            pivot_window_size=10,
-            pivot_price_feature='Close',
-            features=[],
-            # features=[('avg-sent', 5)],
-            use_discrete_actions=True)
-
         env = DummyVecEnv([env_maker])
 
         # device = 'cpu'
