@@ -15,15 +15,15 @@ class Actions(Enum):
 
 # TODO: add tuple arg for determining feature and its window size
 class StockExchangeEnv(ExchangeEnv):
-    def __init__(self, df, frame_bound, pivot_window_size, pivot_price_feature, features, use_discrete_actions,
+    def __init__(self, df, frame_bound, pivot_window_size, pivot_price_feature, features, action_type,
                  reward_type, initial_wealth, transaction_cost):
         assert df.ndim == 2
         assert len(frame_bound) == 2  # checking if the tuple is size 2
 
         self._df = df
+        self._dates = df.index
         self._frame_bound = frame_bound
         self._pivot_window_size = pivot_window_size
-        self._use_discrete_actions = use_discrete_actions
         self._prices, self._state_features, self._window_sizes = self._process_data(pivot_price_feature, features)
         self._shape = (np.sum(self._window_sizes),)
 
@@ -38,10 +38,11 @@ class StockExchangeEnv(ExchangeEnv):
         else:
             raise ValueError('reward_type: {} not supported'.format(self._reward_type))
 
-        # action and state spaces #
+        ### action and state spaces ###
 
         # if reward type if multiplicative system forces continuous actions
-        self._use_discrete_actions = use_discrete_actions and self._reward_type == 'additive'
+        self._use_discrete_actions = action_type == 'discrete' and self._reward_type != 'multiplicative'
+
         action_space = spaces.Discrete(len(Actions)) if self._use_discrete_actions else spaces.Box(
             low=Actions.Short.value, high=Actions.Long.value, shape=(1,), dtype=np.float64)
         observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=self._shape, dtype=np.float64)
@@ -52,7 +53,7 @@ class StockExchangeEnv(ExchangeEnv):
         super().__init__(action_space, observation_space, start_t, end_t)
 
     def _process_data(self, pivot_price_feature, features):
-        # TODO start and end should validated and assgned in init, based on frame_bound
+        # TODO start and end should be validated and assigned in init, based on frame_bound
         start = self._frame_bound[0] - self._pivot_window_size
         end = self._frame_bound[1]
         prices = self._df.loc[:, pivot_price_feature].to_numpy()[start:end]
@@ -66,7 +67,7 @@ class StockExchangeEnv(ExchangeEnv):
 
         return prices, state_features, window_sizes
 
-    def _calculate_reward(self, action_value):
+    def _calculate_return(self, action_value):
         # converting None actions to Neutral = 0
         action = action_value if action_value else Actions.Neutral.value
         past_action = self._action_value_history[-1] if self._action_value_history[-1] else Actions.Neutral.value
@@ -74,16 +75,16 @@ class StockExchangeEnv(ExchangeEnv):
         if self._reward_type == 'additive':
             # reward = shares * [At-1*zt - tc*|At - At-1|], where zt = pt - pt-1
             price_diff = self._prices[self._current_t] - self._prices[self._last_trade_tick]
-            step_reward = self._shares_amount * (past_action * price_diff - self._tc * abs(action - past_action))
+            step_return = self._shares_amount * (past_action * price_diff - self._tc * abs(action - past_action))
         else:
             # reward = wealth * (zt * At-1) * (1 - c*|At - At-1|) - wealth, where zt = (pt/pt-1) - 1
             wealth = self._initial_wealth + self._total_profit
             price_ratio = self._prices[self._current_t] / self._prices[self._last_trade_tick] - 1
             new_wealth = wealth * (1 + price_ratio * past_action) * (1 - self._tc * abs(action - past_action))
 
-            step_reward = new_wealth - wealth
+            step_return = new_wealth - wealth
 
-        return step_reward
+        return step_return
 
     def _get_observation(self):
         # selecting current complete look-back window of features and inverting it for processing
@@ -115,4 +116,7 @@ class StockExchangeEnv(ExchangeEnv):
                 return action[0]  # extracting scalar (np.float64) from single item np array
 
     def _update_profit(self, action_value):
-        self._total_profit += self._calculate_reward(action_value)
+        self._total_profit += self._calculate_return(action_value)
+
+    def _get_current_date(self):
+        return self._dates[self._current_t]
