@@ -13,7 +13,7 @@ class ExchangeEnv(gym.Env):
     """Base stock trading environment for OpenAI gym"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, action_space, observation_space, reward_function, start_t, end_t):
+    def __init__(self, action_space, observation_space, start_t, end_t):
         super(ExchangeEnv, self).__init__()
 
         self.seed()
@@ -21,14 +21,14 @@ class ExchangeEnv(gym.Env):
         # env params
         self.action_space = action_space
         self.observation_space = observation_space
-        self._reward_function = reward_function
 
         # historic data
         self.history = {}
         self._action_value_history = start_t * [None]
 
         # agent's performance market metrics
-        self._total_profit = 0.
+        self._total_return = 0.
+        self._total_reward = 0.
 
         # simulation params
         self._start_t = start_t
@@ -46,16 +46,7 @@ class ExchangeEnv(gym.Env):
 
         self._action_value = self._get_action_value(action, last_step)
 
-        step_return = self._calculate_return(self._action_value)
-        self._total_return += step_return
-        self._update_profit(self._action_value)
-
-        if self._reward_function == 'return':
-            step_reward = step_return
-            self._total_reward = self._total_return
-
-        self._return_history.append(step_return)
-        self._reward_history.append(step_reward)
+        step_reward, step_return = self._calculate_reward()
 
         observation = self._get_observation()
 
@@ -69,7 +60,6 @@ class ExchangeEnv(gym.Env):
             total_return=self._total_return,
             total_reward=self._total_reward,
             action_value=self._action_value,
-            total_profit=self._total_profit,
         )
 
         self._update_history(info)
@@ -92,7 +82,6 @@ class ExchangeEnv(gym.Env):
         self._action_value = None
         self._total_return = 0.
         self._total_reward = 0.
-        self._total_profit = 0.
         self._action_value_history = self._start_t * [None]
         self._reward_history = self._start_t * [None]
         self._return_history = self._start_t * [None]
@@ -112,8 +101,8 @@ class ExchangeEnv(gym.Env):
     def _process_data(self):
         raise NotImplementedError
 
-    def _calculate_return(self, action_value):
-        raise NotImplementedError
+    def _calculate_reward(self):
+        return NotImplementedError
 
     def _get_observation(self):
         return NotImplementedError
@@ -174,9 +163,6 @@ class ExchangeEnv(gym.Env):
 
     def _convert_action(self, action):
         return NotImplementedError
-
-    def _update_profit(self, action_value):
-        raise NotImplementedError
 
     def _get_current_date(self):
         raise NotImplementedError

@@ -86,11 +86,8 @@ ACTION_TYPES = ['discrete', 'continuous']
 REWARD_FUNCTIONS = ['return', 'sharpe_ratio']
 
 RESULTS_HEADER = ['window_step', 'current_step', 'date', 'asset', 'company_name', 'frequency', 'initial_wealth',
-                  'transaction_cost', 'stg', 'algo',
-                  'action_type', 'reward_type', 'reward_function', 'seed', 'train_episodes', 'action_value',
-                  'total_return', 'reward',
-                  'total_reward',
-                  'total_profit']
+                  'transaction_cost', 'stg', 'algo', 'action_type', 'reward_type', 'reward_function', 'seed',
+                  'train_episodes', 'action_value', 'reward', 'total_reward', 'total_return']
 
 DEFAULT_ASSETS = ['AAPL']
 

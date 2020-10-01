@@ -142,8 +142,8 @@ def main(**kwargs):
         filename_eval = os.path.join(settings.RESULTS_DIR,
                                      get_standard_result_filename(asset, stg, algo, seed, max_episodes, 'eval'))
 
-        env_monitored_train = Monitor(env_train, filename=filename_train, info_keywords=("total_profit",))
-        env_monitored_eval = Monitor(env_eval, filename=filename_eval, info_keywords=("total_profit",))
+        env_monitored_train = Monitor(env_train, filename=filename_train, info_keywords=("total_return",))
+        env_monitored_eval = Monitor(env_eval, filename=filename_eval, info_keywords=("total_return",))
         device = 'cpu' if not settings.USE_GPU else 'cuda'
 
         eval_freq = (len(df_eval.index) - pivot_window_size)
