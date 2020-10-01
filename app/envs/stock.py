@@ -16,7 +16,7 @@ class Actions(Enum):
 # TODO: add tuple arg for determining feature and its window size
 class StockExchangeEnv(ExchangeEnv):
     def __init__(self, df, frame_bound, pivot_window_size, pivot_price_feature, features, action_type,
-                 reward_type, reward_function, initial_wealth, transaction_cost):
+                 reward_type, reward_function, initial_wealth, transaction_cost, action_window_size):
         assert df.ndim == 2
         assert len(frame_bound) == 2  # checking if the tuple is size 2
 
@@ -25,7 +25,8 @@ class StockExchangeEnv(ExchangeEnv):
         self._frame_bound = frame_bound
         self._pivot_window_size = pivot_window_size
         self._prices, self._state_features, self._window_sizes = self._process_data(pivot_price_feature, features)
-        self._shape = (np.sum(self._window_sizes),)
+        self._action_window_size = action_window_size
+        self._shape = (np.sum(self._window_sizes) + self._action_window_size,)
 
         self._reward_type = reward_type
 
@@ -92,8 +93,16 @@ class StockExchangeEnv(ExchangeEnv):
 
         # mask for selecting most recent data according for the look-back window size for each feature
         mask = np.arange(len(inv_state_features))[:, None] < self._window_sizes
+        lookback_window = inv_state_features.T[mask.T]
 
-        return inv_state_features.T[mask.T]
+        past_actions = []
+        if self._action_window_size > 0 and self._action_window_size <= len(self._action_value_history):
+            past_actions = self._action_value_history[-self._action_window_size:]
+            past_actions = [Actions.Neutral.value if action is None else action for action in past_actions]
+        else:
+            raise ValueError('action_window_size: {} not supported'.format(self.action_window_size))
+
+        return np.append(lookback_window, past_actions)
 
     # in our case the last action is equivalent to a noop = None
     def _get_action_value(self, action, last_step):
