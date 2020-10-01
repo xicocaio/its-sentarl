@@ -16,7 +16,7 @@ class Actions(Enum):
 # TODO: add tuple arg for determining feature and its window size
 class StockExchangeEnv(ExchangeEnv):
     def __init__(self, df, frame_bound, pivot_window_size, pivot_price_feature, features, action_type,
-                 reward_type, initial_wealth, transaction_cost):
+                 reward_type, reward_function, initial_wealth, transaction_cost):
         assert df.ndim == 2
         assert len(frame_bound) == 2  # checking if the tuple is size 2
 
@@ -50,7 +50,7 @@ class StockExchangeEnv(ExchangeEnv):
         start_t = self._pivot_window_size
         end_t = len(self._prices) - 1
 
-        super().__init__(action_space, observation_space, start_t, end_t)
+        super().__init__(action_space, observation_space, reward_function, start_t, end_t)
 
     def _process_data(self, pivot_price_feature, features):
         # TODO start and end should be validated and assigned in init, based on frame_bound

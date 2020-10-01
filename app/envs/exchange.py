@@ -13,7 +13,7 @@ class ExchangeEnv(gym.Env):
     """Base stock trading environment for OpenAI gym"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, action_space, observation_space, start_t, end_t):
+    def __init__(self, action_space, observation_space, reward_function, start_t, end_t):
         super(ExchangeEnv, self).__init__()
 
         self.seed()
@@ -21,6 +21,7 @@ class ExchangeEnv(gym.Env):
         # env params
         self.action_space = action_space
         self.observation_space = observation_space
+        self._reward_function = reward_function
 
         # historic data
         self.history = {}
@@ -46,19 +47,21 @@ class ExchangeEnv(gym.Env):
         self._action_value = self._get_action_value(action, last_step)
 
         step_return = self._calculate_return(self._action_value)
-        step_reward = step_return
+        self._total_return += step_return
         self._update_profit(self._action_value)
+
+        if self._reward_function == 'return':
+            step_reward = step_return
+            self._total_reward = self._total_return
+
+        self._return_history.append(step_return)
+        self._reward_history.append(step_reward)
 
         observation = self._get_observation()
 
         self._last_trade_tick = self._current_t
 
         self._action_value_history.append(self._action_value)
-        self._return_history.append(step_return)
-        self._reward_history.append(step_reward)
-
-        self._total_return += step_return
-        self._total_reward += step_reward
 
         info = dict(
             current_step=self._current_step,

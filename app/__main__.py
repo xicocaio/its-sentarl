@@ -27,15 +27,17 @@ import quantstats as qs
 import os
 
 
-def prepare_base_result_values(asset, company_name, action_type, reward_type, stg, algo):
+def prepare_base_result_values(asset, action_type, reward_type, stg, algo, frequency, seed):
     return {'asset': asset,
-            'company_name': company_name,
+            'company_name': settings.AVAILABLE_DATA[asset]['name'],
             'action_type': action_type,
             'reward_type': reward_type,
             'stg': stg,
             'algo': algo,
             'initial_wealth': settings.DEFAULT_ENV['initial_wealth'],
-            'tc': settings.DEFAULT_ENV['transaction_cost']}
+            'transaction_cost': settings.DEFAULT_ENV['transaction_cost'],
+            'frequency': frequency,
+            'reward_function': settings.DEFAULT_ENV['reward_function']}
 
 
 def train_model(algo, env, action_type, device, total_timesteps, eval_env, eval_freq, seed):
@@ -137,7 +139,8 @@ def main(**kwargs):
     if stg in settings.AVAILABLE_STGS_ALGO:
         filename_train = os.path.join(settings.RESULTS_DIR,
                                       get_standard_result_filename(asset, stg, algo, seed, max_episodes, 'train'))
-        filename_eval = os.path.join(settings.RESULTS_DIR, get_standard_result_filename(asset, stg, algo, seed, max_episodes, 'eval'))
+        filename_eval = os.path.join(settings.RESULTS_DIR,
+                                     get_standard_result_filename(asset, stg, algo, seed, max_episodes, 'eval'))
 
         env_monitored_train = Monitor(env_train, filename=filename_train, info_keywords=("total_profit",))
         env_monitored_eval = Monitor(env_eval, filename=filename_eval, info_keywords=("total_profit",))
@@ -157,7 +160,7 @@ def main(**kwargs):
     filename_test = get_standard_result_filename(asset, stg, algo, seed, max_episodes, 'test')
     csv_output = CSVOutput(filename_test, overwrite_file=True, delimiter=';')
 
-    base_result_values = prepare_base_result_values(asset, settings.AVAILABLE_DATA[asset]['name'], action_type, reward_type, stg, algo)
+    base_result_values = prepare_base_result_values(asset, action_type, reward_type, stg, algo, frequency, seed)
 
     for k in range(k_rolls):
         observation = env_test.reset()
@@ -166,11 +169,9 @@ def main(**kwargs):
             action = get_stg_action(stg, env_test, action_type, observation, model)
             observation, reward, done, info = env_test.step(action)
 
-            base_result_values['seed'] = seed
             base_result_values['train_episodes'] = max_episodes
             base_result_values['window_step'] = k
             base_result_values['reward'] = reward
-            base_result_values['frequency'] = frequency
 
             csv_output.write({**base_result_values, **info})
 
