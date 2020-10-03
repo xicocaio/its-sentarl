@@ -1,20 +1,29 @@
-### name space declaration ###
+### project internal imports ###
 from .stock import StockExchangeEnv
+import settings
 
 # internal imports
-import settings
 from common import load_dataset
 
 ### other code necessary for proper initialization of env
 from gym.envs.registration import register
-from copy import deepcopy
-import os
-import pandas as pd
-from pathlib import Path
+
+# Default Env Settings
+DEFAULT_ENV = {'asset': 'aapl',
+               'pivot_price_feature': 'Close',
+               'pivot_window_size': 50,
+               'features': [('avg-sent', 5)],
+               'action_window_size': 1,
+               'action_type': 'discrete',
+               'reward_type': 'additive',
+               'reward_function': 'return',
+               'initial_wealth': 1.0,
+               'transaction_cost': 0.0025
+               }
 
 
 def _load_default_env_settings():
-    default_kwargs = settings.DEFAULT_ENV.copy()
+    default_kwargs = DEFAULT_ENV.copy()
     asset = default_kwargs.pop('asset')
 
     df = load_dataset(settings.AVAILABLE_DATA[asset]['fname'], settings.AVAILABLE_DATA[asset]['index_col'])

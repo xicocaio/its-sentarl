@@ -1,3 +1,3 @@
 ### name space declaration ###
-from .utils import *
-from .results_processor import CSVOutput
+from .utils import load_dataset, split_data, colorize
+from .config import Config

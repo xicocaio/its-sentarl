@@ -58,6 +58,8 @@ class StockExchangeEnv(ExchangeEnv):
         # TODO start and end should be validated and assigned in init, based on frame_bound
         start = self._frame_bound[0] - self._pivot_window_size
         end = self._frame_bound[1]
+
+        # if the end value is higher than the size of the df, the returned value get up to the last data point
         prices = self._df.loc[:, pivot_price_feature].to_numpy()[start:end]
 
         diff = np.insert(np.diff(prices), 0, 0)
