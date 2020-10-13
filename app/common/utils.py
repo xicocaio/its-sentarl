@@ -1,7 +1,13 @@
 import os
+from pathlib import Path
+from typing import Dict, Tuple, Union, List
+import csv
+
 import pandas as pd
 
+# internal imports
 import settings
+from .config import Config
 
 _color2num = dict(
     gray=30,
@@ -36,6 +42,10 @@ def split_data(df, test_ratio, window_size, val_ratio=None):
     return df_train, df_test, df_val
 
 
+def prepare_folder_structure(folder_path):
+    Path(folder_path).mkdir(parents=True, exist_ok=True)
+
+
 # From open ai gym source code
 def colorize(string, color, bold=False, highlight=False):
     """Return string surrounded by appropriate terminal color codes to
@@ -53,3 +63,36 @@ def colorize(string, color, bold=False, highlight=False):
         attr.append('1')
     attrs = ';'.join(attr)
     return '\x1b[%sm%s\x1b[0m' % (attrs, string)
+
+
+class CSVOutput(object):
+    """
+    log to a file, in a CSV format
+    """
+
+    def __init__(self,
+                 config: Config,
+                 fieldnames: List,
+                 abs_filename: str,
+                 overwrite_file: bool = True,
+                 delimiter: str = ';'):
+        self.config = config
+
+        mode = 'w' if overwrite_file else 'a'  # use 'w+' or 'a+' if also required to read file
+
+        self.file = open(os.path.join(abs_filename + '.csv'), mode)
+
+        self.csv_writer = csv.DictWriter(self.file, delimiter=delimiter, fieldnames=fieldnames, extrasaction='ignore')
+        self.csv_writer.writeheader()
+
+    def write(self, row: Dict[str, Union[str, Tuple[str, ...]]]) -> None:
+        """
+        writes to  file
+        """
+        self.csv_writer.writerow(row)
+
+    def close(self) -> None:
+        """
+        closes the file
+        """
+        self.file.close()

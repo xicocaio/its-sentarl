@@ -54,6 +54,9 @@ class StockExchangeEnv(ExchangeEnv):
 
         super().__init__(action_space, observation_space, start_t, end_t)
 
+        # other env params
+        self.start_date, self.end_date = self._dates[self._start_t], self._dates[self._end_t]
+
     def _process_data(self, pivot_price_feature, features):
         # TODO start and end should be validated and assigned in init, based on frame_bound
         start = self._frame_bound[0] - self._pivot_window_size

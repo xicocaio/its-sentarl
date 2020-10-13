@@ -18,7 +18,7 @@ class ExchangeEnv(gym.Env):
 
         self.seed()
 
-        # env params
+        # openAi gym env params
         self.action_space = action_space
         self.observation_space = observation_space
 
@@ -33,6 +33,9 @@ class ExchangeEnv(gym.Env):
         # simulation params
         self._start_t = start_t
         self._end_t = end_t
+
+        # additional env params
+        self.max_episode_steps = self._end_t - (self._start_t - 1)
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -55,7 +58,6 @@ class ExchangeEnv(gym.Env):
         self._action_value_history.append(self._action_value)
 
         info = dict(
-            current_step=self._current_step,
             date=self._get_current_date(),
             total_return=self._total_return,
             total_reward=self._total_reward,
@@ -70,12 +72,9 @@ class ExchangeEnv(gym.Env):
             self._episode_over = False
             self._current_t += 1
 
-        self._current_step += 1
-
         return observation, step_reward, self._episode_over, info
 
     def reset(self):
-        self._current_step = 0
         self._episode_over = False
         self._current_t = self._start_t
         self._last_trade_tick = self._current_t - 1
@@ -96,7 +95,7 @@ class ExchangeEnv(gym.Env):
         self._plot_history()
 
     def close(self):
-        fig.close()
+        return
 
     def _process_data(self):
         raise NotImplementedError

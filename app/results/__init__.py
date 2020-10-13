@@ -1,1 +1,1 @@
-from .organizer import CSVOutput, ResultsMonitor
+from .monitor import ResultsMonitor
