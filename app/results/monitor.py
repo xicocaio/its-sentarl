@@ -29,6 +29,7 @@ class ResultsMonitor(gym.Wrapper):
                  env: gym.Env,
                  config: Config,
                  window: str,
+                 overwrite_file: bool = True,
                  additional_info: Dict = {}):
         super(ResultsMonitor, self).__init__(env=env)
         self.config = config
@@ -53,7 +54,8 @@ class ResultsMonitor(gym.Wrapper):
 
         self.base_result_values = self._get_base_result_values(additional_info)
 
-        self.csv_output = CSVOutput(config=self.config, fieldnames=fieldnames, abs_filename=abs_filename)
+        self.csv_output = CSVOutput(config=self.config, fieldnames=fieldnames, abs_filename=abs_filename,
+                                    overwrite_file=overwrite_file)
 
         self.rewards = None
         self.needs_reset = True

@@ -9,8 +9,8 @@ class StaticSetup(BaseSetup):
     def __init__(self, config):
         super(StaticSetup, self).__init__(config=config)
 
-        df_train, df_test, df_val = split_data(self.df, self.test_data_ratio, self.pivot_window_size,
-                                               self.val_data_ratio)
+        df_train, df_test, df_val = split_data(self.df, self.pivot_window_size, self.test_data_ratio,
+                                               self.val_data_ratio, True)
 
         frame_bound_train = (self.pivot_window_size, len(df_train.index))
         frame_bound_val = (self.pivot_window_size, len(df_val.index))
@@ -53,7 +53,7 @@ class StaticSetup(BaseSetup):
 
     def run(self):
         if self.stg in settings.STGS_BASE:
-            for window in ['train', 'val', 'test']:
+            for window in self.window_types:
                 self._run_window(window)
         else:
             model = train_model(self.algo, self.env_train, self.device, self.total_timesteps, self.env_val,

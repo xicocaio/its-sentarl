@@ -4,7 +4,7 @@ import ast
 # internal imports
 import settings
 from common import Config
-from setups import StaticSetup
+from setups import StaticSetup, RollingWindowSetup
 
 NUMERICAL_INPUT_KEYS = ['episodes', 'initial_wealth', 'transaction_cost', 'test_data_ratio', 'val_data_ratio']
 
@@ -26,8 +26,10 @@ def main(**kwargs):
 
     if config.setup == 'static':
         setup = StaticSetup(config)
+    else:
+        setup = RollingWindowSetup(config)
 
-        setup.run()
+    setup.run()
 
 
 if __name__ == '__main__':

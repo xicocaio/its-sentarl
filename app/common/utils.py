@@ -27,16 +27,33 @@ def load_dataset(name, index_name):
     return pd.read_csv(path, index_col=index_name)
 
 
-def split_data(df, test_ratio, window_size, val_ratio=None):
-    train_ratio = 1 - test_ratio
-    idx_mark = int(train_ratio * len(df.index))
+def split_data(df, window_size, test_size, val_size=None, use_ratio=True):
+    """
+    Function for spliting data
+    @param df: data to split
+    @param window_size: lookback window size
+    @param test_size: can be either a specific size or a ratio
+    @param val_size: can be either a specific size or a ratio
+    @param use_ratio: determines whether to treat test and val sizes as ratios
+    @return: In sequence returns dfs for train, test and validation
+    """
+    expected_type = float if use_ratio else int
+    if not isinstance(test_size, expected_type) or (val_size and not isinstance(val_size, expected_type)):
+        raise ValueError('use_ratio={} while size args are of type {}'.format(use_ratio, expected_type))
+
+    df_size = len(df.index)
+
+    train_size = 1 - test_size if use_ratio else df_size - test_size
+    idx_mark = int(train_size * df_size) if use_ratio else train_size
     df_train, df_test = df.iloc[:idx_mark], df.iloc[idx_mark - window_size:]  # adjust to window size
 
+    # if no val_size is passed, df_val should be equal to df_test
     df_val = df_test
-    if val_ratio:
-        val_factor = val_ratio / train_ratio  # val_factor x train_ratio = val_ratio
-        train_factor = 1 - val_factor
-        idx_mark = int(train_factor * idx_mark)
+    if val_size:
+        if use_ratio:
+            val_factor = val_size / train_size  # val_factor x train_ratio = val_ratio
+            train_factor = 1 - val_factor
+        idx_mark = int(train_factor * idx_mark) if use_ratio else idx_mark - val_size
         df_train, df_val = df_train.iloc[:idx_mark], df_train.iloc[idx_mark - window_size:]  # adjust to window size
 
     return df_train, df_test, df_val
@@ -79,20 +96,25 @@ class CSVOutput(object):
         self.config = config
 
         mode = 'w' if overwrite_file else 'a'  # use 'w+' or 'a+' if also required to read file
+        self.file_handler = open(os.path.join(abs_filename + '.csv'), mode)
 
-        self.file = open(os.path.join(abs_filename + '.csv'), mode)
+        self.csv_writer = csv.DictWriter(self.file_handler, delimiter=delimiter, fieldnames=fieldnames,
+                                         extrasaction='ignore')
 
-        self.csv_writer = csv.DictWriter(self.file, delimiter=delimiter, fieldnames=fieldnames, extrasaction='ignore')
-        self.csv_writer.writeheader()
+        # only write header if file is being created
+        if overwrite_file:
+            self.csv_writer.writeheader()
+            self.file_handler.flush()
 
     def write(self, row: Dict[str, Union[str, Tuple[str, ...]]]) -> None:
         """
         writes to  file
         """
         self.csv_writer.writerow(row)
+        self.file_handler.flush()
 
     def close(self) -> None:
         """
         closes the file
         """
-        self.file.close()
+        self.file_handler.close()

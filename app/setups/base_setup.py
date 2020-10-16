@@ -23,6 +23,8 @@ class BaseSetup(object):
         self.df = load_dataset(settings.AVAILABLE_DATA[self.asset]['fname'],
                                settings.AVAILABLE_DATA[self.asset]['index_col'])
 
+        self.window_types = ['train', 'val', 'test']
+
     def _get_stg_action(self, env, observation, model=None):
         if self.stg == 'random':
             action = env.action_space.sample()
@@ -44,8 +46,9 @@ class BaseSetup(object):
                                 initial_wealth=self.initial_wealth,
                                 transaction_cost=self.transaction_cost)
 
-    def _prepare_env(self, df, frame_bound, window, additional_info={}):
+    def _prepare_env(self, df, frame_bound, window, additional_info={}, overwrite_file=None):
         env_maker = self._env_maker(df, frame_bound)
         check_env(env_maker())
 
-        return ResultsMonitor(env_maker(), config=self.config, window=window, additional_info=additional_info)
+        return ResultsMonitor(env_maker(), config=self.config, window=window, overwrite_file=overwrite_file,
+                              additional_info=additional_info)
