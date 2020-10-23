@@ -11,7 +11,8 @@ STGS_BASE = ['bh', 'random']
 
 STGS_ALGO = ['vanilla', 'relesa']
 
-ALLOWED_INPUT_PARAMS = {'frequency': ['hour'],
+ALLOWED_INPUT_PARAMS = {'mode': ['single', 'routine', 'consolidation'],
+                        'frequency': ['hour'],
                         'stg': STGS_BASE + STGS_ALGO,
                         'algo': ['a2c', 'dqn'],
                         'action_type': ['discrete', 'continuous'],
