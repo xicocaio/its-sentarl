@@ -14,13 +14,13 @@ BASE_FILENAME_FIELDS = ['asset', 'stg']
 FOLDER_LEVELS = ('frequency', 'setup', 'asset', 'transaction_cost', 'stg')
 ABS_RESULT_PATH = os.path.dirname(os.path.abspath(__file__))
 
-BASE_HEADER = ['asset', 'company_name', 'frequency', 'set', 'initial_wealth', 'transaction_cost', 'stg', 'algo',
-               'action_type', 'reward_type', 'reward_function', 'seed', 'total_reward', 'total_return']
+BASE_HEADER = ['config', 'asset', 'company_name', 'frequency', 'set', 'initial_wealth', 'transaction_cost', 'stg',
+               'algo', 'action_type', 'reward_type', 'reward_function', 'seed', 'total_reward', 'total_return']
 
 TRAIN_RESULTS_HEADER = ['window_roll', 'current_episode', 'total_steps', 'start_date', 'end_date'] + BASE_HEADER
 
 TEST_RESULTS_HEADER = ['window_roll', 'test_run', 'current_step', 'date', 'train_episodes'] + BASE_HEADER + [
-    'action_value', 'reward']
+    'action_value', 'reward', 'step_return']
 
 
 class ResultsMonitor(gym.Wrapper):
@@ -128,9 +128,10 @@ class ResultsMonitor(gym.Wrapper):
         filename_fields = BASE_FILENAME_FIELDS.copy()
 
         if config_dict['stg'] in settings.STGS_ALGO:
-            filename_fields.extend(['algo', 'episodes'])
+            config_dict['config'] = config_dict['name']  # adjusting config name field for filename
+            filename_fields = ['config'] + filename_fields + ['algo', 'episodes']  # adjuting order of fields
         if config_dict['stg'] not in settings.STGS_BASE:
-            filename_fields.extend(['seed'])
+            filename_fields.extend(['reward_function', 'seed'])
 
         # preparing filename
         fields = [[field, str(config_dict[field])] for field in filename_fields]

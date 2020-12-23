@@ -65,12 +65,9 @@ class StockExchangeEnv(ExchangeEnv):
         # if the end value is higher than the size of the df, the returned value get up to the last data point
         prices = self._df.loc[:, pivot_price_feature].to_numpy()[start:end]
 
-        diff = np.insert(np.diff(prices), 0, 0)
-        in_features = self._df.loc[:, [feat for feat, _ in features]].to_numpy()[start:end]
-        state_features = np.column_stack((diff, in_features))
+        state_features = self._df.loc[:, [feat for feat, _ in features]].to_numpy()[start:end]
 
-        window_sizes = np.column_stack((self._pivot_window_size, [size for _, size in features])) if features else [
-            self._pivot_window_size]
+        window_sizes = np.expand_dims([size for _, size in features], axis=0)
 
         return prices, state_features, window_sizes
 
@@ -100,7 +97,7 @@ class StockExchangeEnv(ExchangeEnv):
 
         if self._reward_function == 'return':
             step_reward = step_return
-            self._total_reward = self._total_return
+            self._total_reward += step_reward
         elif self._reward_function == 'sharpe_ratio':
             reward_mean = np.nanmean(np.array(self._return_history).astype('float64'))
             reward_std = np.nanstd(np.array(self._return_history).astype('float64'))

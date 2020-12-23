@@ -59,6 +59,7 @@ class ExchangeEnv(gym.Env):
 
         info = dict(
             date=self._get_current_date(),
+            step_return=step_return,
             total_return=self._total_return,
             total_reward=self._total_reward,
             action_value=self._action_value,

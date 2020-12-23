@@ -22,6 +22,7 @@ class StaticSetup(BaseSetup):
 
         additional_info = dict({'window_roll': 0,
                                 'seed': self.seed if self.stg in settings.STGS_ALGO else None,
+                                'config': self.config.name if self.stg in settings.STGS_ALGO else None,
                                 'train_episodes': self.episodes})
 
         self.env_train = self._prepare_env(df_train, frame_bound_train, 'train', additional_info=additional_info)
@@ -46,7 +47,8 @@ class StaticSetup(BaseSetup):
                 observation, reward, done, info = env.step(action)
 
                 if done:
-                    print("info:", info)
+                    if self.ep_verbose:
+                        print("info:", info)
                     break
 
         env.close()
@@ -57,6 +59,6 @@ class StaticSetup(BaseSetup):
                 self._run_window(window)
         else:
             model = train_model(self.algo, self.env_train, self.device, self.total_timesteps, self.env_val,
-                                self.episodes, self.seed)
+                                self.episodes, self.seed, self.sb_verbose)
 
             self._run_window('test', model)

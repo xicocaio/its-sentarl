@@ -11,7 +11,7 @@ from gym.envs.registration import register
 # Default Env Settings
 DEFAULT_ENV = {'asset': 'aapl',
                'pivot_price_feature': 'Close',
-               'pivot_window_size': 50,
+               'pivot_window_size': 20,
                'features': [('avg-sent', 5)],
                'action_window_size': 1,
                'action_type': 'discrete',

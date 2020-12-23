@@ -10,7 +10,7 @@ class RollingWindowSetup(BaseSetup):
     def __init__(self, config):
         super(RollingWindowSetup, self).__init__(config=config)
 
-        self.k_rolls = 10
+        self.k_rolls = 5
 
         self.train_size, self.test_size, self.val_size = self._get_dataset_sizes()
         self.dfs = self._get_dfs()
@@ -23,6 +23,7 @@ class RollingWindowSetup(BaseSetup):
         for roll, df_item in enumerate(self.dfs):
             additional_info = dict({'window_roll': roll,
                                     'seed': self.seed if self.stg in settings.STGS_ALGO else None,
+                                    'config': self.config.name if self.stg in settings.STGS_ALGO else None,
                                     'train_episodes': self.episodes})
             overwrite_file = True if roll == 0 else False
 
@@ -37,7 +38,7 @@ class RollingWindowSetup(BaseSetup):
                     self._run_window(window, envs[window])
             else:
                 model = train_model(self.algo, envs['train'], self.device, self.total_timesteps, envs['val'],
-                                    self.episodes, self.seed)
+                                    self.episodes, self.seed, self.sb_verbose)
 
                 self._run_window('test', envs['test'], model)
 
@@ -54,12 +55,13 @@ class RollingWindowSetup(BaseSetup):
                 observation, reward, done, info = env.step(action)
 
                 if done:
-                    print("info:", info)
+                    if self.ep_verbose:
+                        print("info:", info)
                     break
 
         env.close()
 
-    def _get_dataset_sizes(self, min_train_size=1000, min_train_ratio=0.5):
+    def _get_dataset_sizes(self, min_train_size=2000, min_train_ratio=0.8):
         total_size = len(self.df.index)
 
         for i in itertools.count(start=min_train_size):
