@@ -11,6 +11,7 @@ class RollingWindowSetup(BaseSetup):
         super(RollingWindowSetup, self).__init__(config=config)
 
         self.k_rolls = 5
+        self.use_val = False
 
         self.train_size, self.test_size, self.val_size = self._get_dataset_sizes()
         self.dfs = self._get_dfs()
@@ -61,7 +62,7 @@ class RollingWindowSetup(BaseSetup):
 
         env.close()
 
-    def _get_dataset_sizes(self, min_train_size=2000, min_train_ratio=0.8):
+    def _get_dataset_sizes(self, min_train_size=3000, min_train_ratio=0.9):
         total_size = len(self.df.index)
 
         for i in itertools.count(start=min_train_size):
@@ -72,11 +73,14 @@ class RollingWindowSetup(BaseSetup):
             total_size_available = total_size - train_size_adjusted
 
             # simple offset to k_rolls to take into account the validation set as it is the same size as test
-            k_rolls_offset = self.k_rolls + 1
+            k_rolls_offset = self.k_rolls + 1 if self.use_val else self.k_rolls
 
             test_size = total_size_available / k_rolls_offset
-            val_size = test_size
-            train_ratio = train_size / (train_size + val_size + test_size)
+
+            # adjusting in case of validation set size greater then zero
+            val_size = test_size if self.use_val else 0
+            complete_size = train_size + val_size + test_size if self.use_val else train_size + test_size
+            train_ratio = train_size / complete_size
 
             # test and val sizes must be an exact whole number and
             # train_ratio (and not train_size_adjusted) must satisfy min_train_ratio
@@ -89,7 +93,8 @@ class RollingWindowSetup(BaseSetup):
         dfs = []
         df_remaining = self.df.copy()
 
-        adopted_size = self.train_size + 2 * self.test_size
+        # adjusting adopted_size depending on thr use of a val set
+        adopted_size = self.train_size + 2 * self.test_size if self.use_val else self.train_size + self.test_size
         roll_size = self.test_size
         for k in range(self.k_rolls):
             df_roll = df_remaining.iloc[:adopted_size]

@@ -27,7 +27,7 @@ def load_dataset(name, index_name):
     return pd.read_csv(path, index_col=index_name)
 
 
-def split_data(df, window_size, test_size, val_size=None, use_ratio=True):
+def split_data(df, window_size, test_size, val_size=0, use_ratio=True):
     """
     Function for spliting data
     @param df: data to split
@@ -49,7 +49,7 @@ def split_data(df, window_size, test_size, val_size=None, use_ratio=True):
 
     # if no val_size is passed, df_val should be equal to df_test
     df_val = df_test
-    if val_size:
+    if val_size > 0:
         if use_ratio:
             val_factor = val_size / train_size  # val_factor x train_ratio = val_ratio
             train_factor = 1 - val_factor

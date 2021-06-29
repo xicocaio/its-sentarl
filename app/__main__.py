@@ -38,6 +38,7 @@ def main(**kwargs):
         Routine(routine_name).run()
 
     # consolidation always run
+    print('\n--- Starting consolidation ---\n')
     singlefile_consolidation()
 
 

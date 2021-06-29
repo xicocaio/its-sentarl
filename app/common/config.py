@@ -11,6 +11,7 @@ class Config:
                  episodes=100,
                  action_type='discrete',
                  reward_type='additive',
+                 seed=42,
                  initial_wealth=1.0,
                  transaction_cost=0.0025,
                  frequency='hour',
@@ -29,6 +30,7 @@ class Config:
         self.episodes = episodes if self.stg not in settings.STGS_BASE else 1
         self.action_type = action_type
         self.reward_type = reward_type
+        self.seed = seed
         self.initial_wealth = initial_wealth
         self.transaction_cost = transaction_cost
         self.frequency = frequency
@@ -41,7 +43,6 @@ class Config:
         self.ep_verbose = ep_verbose
 
         self.device = 'cpu' if not settings.USE_GPU else 'cuda'
-        self.seed = 42
 
         # forcing to deterministic_test to True if setup type is rolling window
         self.deterministic_test = True if self.setup == 'rolling' else deterministic_test
