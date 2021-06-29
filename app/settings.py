@@ -11,7 +11,7 @@ STGS_BASE = ['bh', 'random']
 STGS_ALGO = ['vanilla', 'relesa']  # options: relesa, vanilla
 
 FREQUENCIES = ['hour']
-REWARD_FUNCTIONS = ['return' ]  # options: return, sharpe_ratio
+REWARD_FUNCTIONS = ['return']  # options: return, sharpe_ratio
 TRANSACTION_COSTS = [0.0025]  # options: 0.0, 0.0005, 0.0015, 0.0025
 
 ROUTINES = ['default']
@@ -19,7 +19,7 @@ ROUTINES = ['default']
 ALLOWED_INPUT_PARAMS = {'mode': ['single', 'routine', 'consolidation'],
                         'frequency': FREQUENCIES,
                         'stg': STGS_BASE + STGS_ALGO,
-                        'algo': ['a2c', 'dqn'],
+                        'algo': ['a2c', 'dqn', 'ppo'],
                         'action_type': ['discrete', 'continuous'],
                         'reward_function': REWARD_FUNCTIONS,
                         'setup': ['static', 'rolling'],
