@@ -71,6 +71,17 @@ class StockExchangeEnv(ExchangeEnv):
 
         return prices, state_features, window_sizes
 
+    def _calculate_sharpe_ratio(self, step_return):
+        reward_mean = np.nanmean(np.array(self._return_history).astype('float64'))
+        reward_std = np.nanstd(np.array(self._return_history).astype('float64'))
+
+        if reward_std != 0:
+            sr = (reward_mean / reward_std).item()
+        else:
+            sr = step_return
+
+        return sr
+
     def _calculate_return(self, action_value):
         # converting None actions to Neutral = 0
         action = action_value if action_value else Actions.Neutral.value
@@ -96,23 +107,19 @@ class StockExchangeEnv(ExchangeEnv):
         self._return_history.append(step_return)
         self._total_return += step_return
 
+        sr = self._calculate_sharpe_ratio(step_return)
+        self._sr_history.append(sr)
+
         if self._reward_function == 'return':
             step_reward = step_return
             self._total_reward += step_reward
         elif self._reward_function == 'sharpe_ratio':
-            reward_mean = np.nanmean(np.array(self._return_history).astype('float64'))
-            reward_std = np.nanstd(np.array(self._return_history).astype('float64'))
-
-            if reward_std != 0:
-                step_reward = (reward_mean / reward_std).item()
-            else:
-                step_reward = step_return
-
-            self._total_reward = step_reward
+            step_reward = sr
+            self._total_reward = sr
 
         self._reward_history.append(step_reward)
 
-        return step_reward, step_return
+        return step_reward, step_return, sr
 
     def _get_observation(self):
         # selecting current complete look-back window of features and inverting it for processing

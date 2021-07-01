@@ -31,6 +31,6 @@ DEFAULT_ASSETS = ['aapl']
 
 USE_GPU = False
 
-FOLDER_LEVELS_RESULTS = ['frequency', 'setup', 'asset', 'transaction_cost', 'stg']
-FOLDER_LEVELS_MODELS = FOLDER_LEVELS_RESULTS + ['seed', 'window_roll']
+FOLDER_LEVELS_RESULTS = ['frequency', 'setup', 'asset', 'transaction_cost', 'stg', 'seed', 'window_roll']
+FOLDER_LEVELS_MODELS = FOLDER_LEVELS_RESULTS
 BASE_FILENAME_FIELDS = ['asset', 'stg']

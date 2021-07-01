@@ -49,7 +49,7 @@ class ExchangeEnv(gym.Env):
 
         self._action_value = self._get_action_value(action, last_step)
 
-        step_reward, step_return = self._calculate_reward()
+        step_reward, step_return, sr = self._calculate_reward()
 
         observation = self._get_observation()
 
@@ -60,6 +60,7 @@ class ExchangeEnv(gym.Env):
         info = dict(
             date=self._get_current_date(),
             step_return=step_return,
+            sharpe_ratio=sr,
             total_return=self._total_return,
             total_reward=self._total_reward,
             action_value=self._action_value,
@@ -85,6 +86,7 @@ class ExchangeEnv(gym.Env):
         self._action_value_history = self._start_t * [None]
         self._reward_history = self._start_t * [None]
         self._return_history = self._start_t * [None]
+        self._sr_history = self._start_t * [None]
         self._first_rendering = True
 
         self.history = {}

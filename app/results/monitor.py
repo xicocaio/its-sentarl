@@ -14,7 +14,8 @@ BASE_FILENAME_FIELDS = settings.BASE_FILENAME_FIELDS
 ABS_RESULT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 BASE_HEADER = ['config', 'asset', 'company_name', 'frequency', 'set', 'initial_wealth', 'transaction_cost', 'stg',
-               'algo', 'action_type', 'reward_type', 'reward_function', 'seed', 'total_reward', 'total_return']
+               'algo', 'action_type', 'reward_type', 'reward_function', 'seed', 'total_reward', 'total_return',
+               'sharpe_ratio']
 
 TRAIN_RESULTS_HEADER = ['window_roll', 'current_episode', 'total_steps', 'start_date', 'end_date'] + BASE_HEADER
 
