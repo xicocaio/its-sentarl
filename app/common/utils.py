@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Dict, Tuple, Union, List
 import csv
+import inspect
 
 import pandas as pd
 
@@ -20,6 +21,46 @@ _color2num = dict(
     white=37,
     crimson=38
 )
+
+
+def generate_filename(config: Config, window: str, filetype: str = 'result'):
+    config_dict = dict(inspect.getmembers(config))
+    filename_fields = settings.BASE_FILENAME_FIELDS.copy()
+
+    if config_dict['stg'] in settings.STGS_ALGO:
+        config_dict['config'] = config_dict['name']  # adjusting config name field for filename
+        ending_fields = ['algo', 'episodes'] if filetype == 'result' else ['algo']
+        filename_fields = ['config'] + filename_fields + ending_fields  # adjusting order of fields
+    if config_dict['stg'] not in settings.STGS_BASE:
+        filename_fields.extend(['reward_function', 'seed'])
+
+    # preparing filename
+    fields = [[field, str(config_dict[field])] for field in filename_fields]
+    fields.append([window])
+
+    return '-'.join('_'.join(field) for field in fields)
+
+
+def prepare_folder_structure(abs_origin_path, config: Config = None, foldertype: str = 'result', seed: int = 0,
+                             window_roll: int = 0):
+    folder_path = abs_origin_path
+
+    if config:
+        folder_list = dict(inspect.getmembers(config))
+        folder_levels = settings.FOLDER_LEVELS_RESULTS
+        if foldertype == 'model':
+            folder_levels = settings.FOLDER_LEVELS_MODELS
+            folder_list['window_roll'] = 'roll_' + str(window_roll)
+            folder_list['seed'] = 'seed_' + str(seed)
+
+        if not all(k in folder_list for k in folder_levels):
+            raise ValueError('Some of the following entries not found in config: ', folder_levels)
+
+        folder_path = os.path.join(abs_origin_path, *[str(folder_list[k]) for k in folder_levels])
+
+    Path(folder_path).mkdir(parents=True, exist_ok=True)
+
+    return folder_path
 
 
 def load_dataset(name, index_name):
@@ -57,10 +98,6 @@ def split_data(df, window_size, test_size, val_size=0, use_ratio=True):
         df_train, df_val = df_train.iloc[:idx_mark], df_train.iloc[idx_mark - window_size:]  # adjust to window size
 
     return df_train, df_test, df_val
-
-
-def prepare_folder_structure(folder_path):
-    Path(folder_path).mkdir(parents=True, exist_ok=True)
 
 
 # From open ai gym source code

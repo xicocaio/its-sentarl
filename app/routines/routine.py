@@ -14,31 +14,24 @@ ROUTINE_DEFAULT = {'setup': 'rolling',
 
 
 class Routine(object):
-    def __init__(self, routine_name):
+    def __init__(self, routine_name, target_episode=50):
         self.routine_name = routine_name
 
-        if self.routine_name == 'default':
-            self.config_name = None
-            self.setup = 'rolling'
-            self.assets = settings.AVAILABLE_DATA.keys()
-            self.tcs = settings.TRANSACTION_COSTS
-            self.frequencies = settings.FREQUENCIES
-            self.reward_functions = settings.REWARD_FUNCTIONS
-            self.stgs = settings.STGS_ALGO
-            # self.stgs = settings.STGS_BASE
-            self.seeds = [42, 1, 6888, 13, 17]
+        self.config_name = None
+        self.setup = 'rolling'
+        self.assets = settings.AVAILABLE_DATA.keys()
+        self.tcs = settings.TRANSACTION_COSTS
+        self.frequencies = settings.FREQUENCIES
+        self.reward_functions = settings.REWARD_FUNCTIONS
+        self.stgs = settings.STGS_ALGO
+        # self.stgs = settings.STGS_BASE
+        self.seeds = [42, 1, 6888, 13, 17]
+        self.episodes = target_episode
+        self.load_model = False
 
-    # def run(kwargs):
-    #     # if no mode is specified the default is single mode
-    #     mode = 'single' if 'mode' not in kwargs else kwargs.pop('mode')
-    #
-    #     config = Config(**kwargs)
-    #
-    #     # if mode other than single, no simulation runs
-    #     if mode == 'single':
-    #         setup = StaticSetup(config) if config.setup == 'static' else RollingWindowSetup(config)
-    #
-    #         setup.run()
+        if self.routine_name == 'load_model':
+            self.episodes = target_episode
+            self.load_model = True
 
     def run(self):
         print('\n### Routine option selected ###')
@@ -63,8 +56,9 @@ class Routine(object):
         # continue_list = [('hour', 0.0025, 'aapl', 'return', 42, 'vanilla')]
         for frequency, tc, asset, reward_function, seed, stg in specs:
             self.config_name = 'min-sent-5' if stg == 'relesa' else 'default'
-            cfg = Config(name=self.config_name, seed=seed, stg=stg, asset=asset, setup=self.setup, frequency=frequency,
-                         reward_function=reward_function, transaction_cost=tc, sb_verbose=False, ep_verbose=False)
+            cfg = Config(name=self.config_name, seed=seed, stg=stg, asset=asset, episodes=self.episodes,
+                         setup=self.setup, frequency=frequency, reward_function=reward_function, transaction_cost=tc,
+                         sb_verbose=False, ep_verbose=False)
 
             initial_run_t = time.process_time()
             print('\n--- Starting run {}/{} for: {}, {}, tc {}, {}, {}, seed {} ---'.format(run_count, total_runs, stg,
@@ -78,7 +72,7 @@ class Routine(object):
             #     # print('Jumping over: ', continue_list)
             #     continue
 
-            setup = StaticSetup(cfg) if cfg.setup == 'static' else RollingWindowSetup(cfg)
+            setup = StaticSetup(cfg) if cfg.setup == 'static' else RollingWindowSetup(cfg, self.load_model)
 
             setup.run()
 

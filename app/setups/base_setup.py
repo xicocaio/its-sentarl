@@ -15,10 +15,6 @@ class BaseSetup(object):
     def __init__(self, config):
         self.config = config
 
-        # TODO: consider removing this and just use config directly
-        for key, value in vars(self.config).items():
-            setattr(self, key, value)
-
         # time window of 5 for sent seems better at first than 10
         self.pivot_window_size = 20
 
@@ -26,11 +22,18 @@ class BaseSetup(object):
             ('diff', self.pivot_window_size),
             ('hour_of_day_relative', self.pivot_window_size)]
 
-        if self.stg == 'relesa':
+        if self.config.stg == 'relesa':
+            # self.features.extend([('avg-sent', 3),
+            #                       ('max-sent', 3)])
+            # self.features.extend([('min-sent', 5), ('news_count_div', 5)])
             self.features.extend([('min-sent', 5)])
 
-        self.df = load_dataset(settings.AVAILABLE_DATA[self.asset]['fname'],
-                               settings.AVAILABLE_DATA[self.asset]['index_col'])
+        # self.features = [('hour_of_day', self.pivot_window_size), ('day_of_week', self.pivot_window_size),
+        #                  ('Open', self.pivot_window_size), ('High', self.pivot_window_size),
+        #                  ('Low', self.pivot_window_size), ('Close', self.pivot_window_size)]
+
+        self.df = load_dataset(settings.AVAILABLE_DATA[self.config.asset]['fname'],
+                               settings.AVAILABLE_DATA[self.config.asset]['index_col'])
 
         self.window_types = ['train', 'val', 'test']
 
@@ -38,12 +41,12 @@ class BaseSetup(object):
         return NotImplementedError
 
     def _get_stg_action(self, env, observation, model=None):
-        if self.stg == 'random':
+        if self.config.stg == 'random':
             action = env.action_space.sample()
-        elif self.stg == 'bh':
-            action = env.action_space.n - 1 if self.action_type == 'discrete' else env.action_space.high
+        elif self.config.stg == 'bh':
+            action = env.action_space.n - 1 if self.config.action_type == 'discrete' else env.action_space.high
         else:
-            action, _states = model.predict(observation, deterministic=self.deterministic_test)
+            action, _states = model.predict(observation, deterministic=self.config.deterministic_test)
 
         return action
 
@@ -53,17 +56,17 @@ class BaseSetup(object):
                                 frame_bound=frame_bound,
                                 pivot_window_size=self.pivot_window_size,
                                 features=self.features,
-                                action_type=self.action_type,
-                                reward_type=self.reward_type,
-                                reward_function=self.reward_function,
-                                initial_wealth=self.initial_wealth,
-                                transaction_cost=self.transaction_cost)
+                                action_type=self.config.action_type,
+                                reward_type=self.config.reward_type,
+                                reward_function=self.config.reward_function,
+                                initial_wealth=self.config.initial_wealth,
+                                transaction_cost=self.config.transaction_cost)
 
     def prep_data(self, df):
         df['diff'] = np.insert(np.diff(df['Close'].to_numpy()), 0, 0)
         df['hour_of_day_relative'] = df['hour_of_day'] / 24
         df['day_of_week_relative'] = df['day_of_week'] / 7
-        df['close_norm'] = 2*(df['Close'] - df['Close'].min()) / (df['Close'].max() - df['Close'].min()) - 1
+        df['close_norm'] = 2 * (df['Close'] - df['Close'].min()) / (df['Close'].max() - df['Close'].min()) - 1
         df['news_count_div'] = df['news-count'] / 10
 
     def _prepare_env(self, df, frame_bound, window, additional_info={}, overwrite_file=None):

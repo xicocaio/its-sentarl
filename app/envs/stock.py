@@ -91,6 +91,7 @@ class StockExchangeEnv(ExchangeEnv):
         return step_return
 
     def _calculate_reward(self):
+        # TODO: maybe move this and other metrics (SR, MDD, Sortino) calculations to utils or other utility module
         step_return = self._calculate_return(self._action_value)
         self._return_history.append(step_return)
         self._total_return += step_return

@@ -136,3 +136,4 @@ dmypy.json
 # project internal folders
 app/data/*.csv
 app/results/**/*.csv
+app/models/**/*.zip

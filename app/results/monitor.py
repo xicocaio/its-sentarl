@@ -8,10 +8,9 @@ import numpy as np
 
 # internal imports
 import settings
-from common import Config, CSVOutput, prepare_folder_structure
+from common import Config, CSVOutput, prepare_folder_structure, generate_filename
 
-BASE_FILENAME_FIELDS = ['asset', 'stg']
-FOLDER_LEVELS = ('frequency', 'setup', 'asset', 'transaction_cost', 'stg')
+BASE_FILENAME_FIELDS = settings.BASE_FILENAME_FIELDS
 ABS_RESULT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 BASE_HEADER = ['config', 'asset', 'company_name', 'frequency', 'set', 'initial_wealth', 'transaction_cost', 'stg',
@@ -19,8 +18,8 @@ BASE_HEADER = ['config', 'asset', 'company_name', 'frequency', 'set', 'initial_w
 
 TRAIN_RESULTS_HEADER = ['window_roll', 'current_episode', 'total_steps', 'start_date', 'end_date'] + BASE_HEADER
 
-TEST_RESULTS_HEADER = ['window_roll', 'test_run', 'current_step', 'date', 'train_episodes'] + BASE_HEADER + [
-    'action_value', 'reward', 'step_return']
+TEST_RESULTS_HEADER = ['window_roll', 'test_run', 'current_step', 'date', 'train_episodes'] + BASE_HEADER + \
+                      ['action_value', 'reward', 'step_return']
 
 
 class ResultsMonitor(gym.Wrapper):
@@ -35,10 +34,8 @@ class ResultsMonitor(gym.Wrapper):
         self.config = config
         self.window = window
 
-        dest_path = self._get_dest_path()
-        prepare_folder_structure(dest_path)
-        filename = self._get_filename(window)
-
+        filename = generate_filename(config, window)
+        dest_path = prepare_folder_structure(ABS_RESULT_PATH, config)
         abs_filename = os.path.join(dest_path, filename)
 
         self.t_start = time.time()
@@ -123,22 +120,6 @@ class ResultsMonitor(gym.Wrapper):
         if self.csv_output is not None:
             self.csv_output.close()
 
-    def _get_filename(self, window):
-        config_dict = vars(self.config)
-        filename_fields = BASE_FILENAME_FIELDS.copy()
-
-        if config_dict['stg'] in settings.STGS_ALGO:
-            config_dict['config'] = config_dict['name']  # adjusting config name field for filename
-            filename_fields = ['config'] + filename_fields + ['algo', 'episodes']  # adjuting order of fields
-        if config_dict['stg'] not in settings.STGS_BASE:
-            filename_fields.extend(['reward_function', 'seed'])
-
-        # preparing filename
-        fields = [[field, str(config_dict[field])] for field in filename_fields]
-        fields.append([window])
-
-        return '-'.join('_'.join(field) for field in fields)
-
     def _get_base_result_values(self, additional_info: Dict = {}):
         base_result_values = {'asset': self.config.asset,
                               'company_name': settings.AVAILABLE_DATA[self.config.asset]['name'],
@@ -152,10 +133,3 @@ class ResultsMonitor(gym.Wrapper):
                               'reward_function': self.config.reward_function}
 
         return {**base_result_values, **additional_info}
-
-    def _get_dest_path(self):
-        config_dict = vars(self.config)
-        if not all(k in config_dict for k in FOLDER_LEVELS):
-            raise ValueError('Some of the following entries not found in config: ', FOLDER_LEVELS)
-
-        return os.path.join(ABS_RESULT_PATH, *[str(config_dict[k]) for k in FOLDER_LEVELS])

@@ -14,7 +14,7 @@ FREQUENCIES = ['hour']
 REWARD_FUNCTIONS = ['return']  # options: return, sharpe_ratio
 TRANSACTION_COSTS = [0.0025]  # options: 0.0, 0.0005, 0.0015, 0.0025
 
-ROUTINES = ['default']
+ROUTINES = ['default', 'load_model']
 
 ALLOWED_INPUT_PARAMS = {'mode': ['single', 'routine', 'consolidation'],
                         'frequency': FREQUENCIES,
@@ -30,3 +30,7 @@ ALLOWED_INPUT_PARAMS = {'mode': ['single', 'routine', 'consolidation'],
 DEFAULT_ASSETS = ['aapl']
 
 USE_GPU = False
+
+FOLDER_LEVELS_RESULTS = ['frequency', 'setup', 'asset', 'transaction_cost', 'stg']
+FOLDER_LEVELS_MODELS = FOLDER_LEVELS_RESULTS + ['seed', 'window_roll']
+BASE_FILENAME_FIELDS = ['asset', 'stg']

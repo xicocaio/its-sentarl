@@ -2,48 +2,55 @@
 import settings
 from .base_setup import BaseSetup
 from common import CSVOutput, load_dataset, split_data
-from models import train_model
+from models import train_model, load_model
 import itertools
 
 
 class RollingWindowSetup(BaseSetup):
-    def __init__(self, config):
+    def __init__(self, config, load_model):
         super(RollingWindowSetup, self).__init__(config=config)
 
+        self.load_model = load_model
         self.k_rolls = 5
         self.use_val = False
 
         self.train_size, self.test_size, self.val_size = self._get_dataset_sizes()
         self.dfs = self._get_dfs()
 
-        if self.stg in settings.STGS_ALGO:
-            self.total_timesteps = self.episodes * (self.train_size - self.pivot_window_size)
+        if self.config.stg in settings.STGS_ALGO:
+            self.total_timesteps = self.config.episodes * (self.train_size - self.pivot_window_size)
             print('Total training timesteps: {}'.format(self.total_timesteps))
 
     def run(self):
         for roll, df_item in enumerate(self.dfs):
             additional_info = dict({'window_roll': roll,
-                                    'seed': self.seed if self.stg in settings.STGS_ALGO else None,
-                                    'config': self.config.name if self.stg in settings.STGS_ALGO else None,
-                                    'train_episodes': self.episodes})
+                                    'seed': self.config.seed if self.config.stg in settings.STGS_ALGO else None,
+                                    'config': self.config.name if self.config.stg in settings.STGS_ALGO else None,
+                                    'train_episodes': self.config.episodes})
             overwrite_file = True if roll == 0 else False
 
             envs = {}
             for window in self.window_types:
+                # jumping over train and val if loading algo model to run test
+                if self.load_model and self.config.stg in settings.STGS_ALGO and window in ['train', 'val']:
+                    continue
+
                 frame_bound = (self.pivot_window_size, len(df_item[window].index))
                 envs[window] = self._prepare_env(df_item[window], frame_bound, window, additional_info=additional_info,
                                                  overwrite_file=overwrite_file)
 
-            if self.stg in settings.STGS_BASE:
+            if self.config.stg in settings.STGS_BASE:
                 for window in self.window_types:
-                    self._run_window(window, envs[window])
+                    self._run_window(envs[window])
             else:
-                model = train_model(self.algo, envs['train'], self.device, self.total_timesteps, envs['val'],
-                                    self.episodes, self.seed, self.sb_verbose)
+                if self.load_model:
+                    model = load_model(self.total_timesteps, self.config, window, roll)
+                else:
+                    model = train_model(envs['train'], self.total_timesteps, envs['val'], self.config, window, roll)
 
-                self._run_window('test', envs['test'], model)
+                self._run_window(envs['test'], model)
 
-    def _run_window(self, window, env, model=None):
+    def _run_window(self, env, model=None):
         # test_runs = self.test_runs if self.stg != 'bh' and window == 'test' and not self.deterministic_test else 1
 
         test_runs = 1
@@ -56,7 +63,7 @@ class RollingWindowSetup(BaseSetup):
                 observation, reward, done, info = env.step(action)
 
                 if done:
-                    if self.ep_verbose:
+                    if self.config.ep_verbose:
                         print("info:", info)
                     break
 
@@ -104,7 +111,5 @@ class RollingWindowSetup(BaseSetup):
                                                    False)
 
             dfs.append({'train': df_train, 'val': df_val, 'test': df_test})
-
-            # roll_size
 
         return dfs
