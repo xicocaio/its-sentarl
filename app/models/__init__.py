@@ -37,18 +37,17 @@ def train_model(env, total_timesteps, val_env, config: Config, window: str, wind
     if config.algo == 'a2c':
         # policy_kwargs = dict(net_arch=[64, 'lstm', dict(vf=[128, 128, 128], pi=[128, 128, 128])])
         model = A2C('MlpPolicy', env, device=config.device, verbose=config.sb_verbose, seed=config.seed)
-        model.learn(total_timesteps=total_timesteps, eval_env=val_env, eval_freq=eval_freq, n_eval_episodes=1)
         model.learn(total_timesteps=total_timesteps, eval_env=val_env, eval_freq=eval_freq, n_eval_episodes=1,
                     callback=save_model_callback)
     if config.algo == 'ppo':
         # policy_kwargs = dict(net_arch=[64, 'lstm', dict(vf=[128, 128, 128], pi=[128, 128, 128])])
         model = PPO('MlpPolicy', env, device=config.device, verbose=config.sb_verbose, seed=config.seed)
-        model.learn(total_timesteps=total_timesteps, eval_env=val_env, eval_freq=eval_freq, n_eval_episodes=1)
         model.learn(total_timesteps=total_timesteps, eval_env=val_env, eval_freq=eval_freq, n_eval_episodes=1,
                     callback=save_model_callback)
     if config.algo == 'dqn':
         model = DQN('MlpPolicy', env, device=config.device, verbose=config.sb_verbose)
-        model.learn(total_timesteps=total_timesteps)
+        model.learn(total_timesteps=total_timesteps, eval_env=val_env, eval_freq=eval_freq, n_eval_episodes=1,
+                    callback=save_model_callback)
 
     return model
 
