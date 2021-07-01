@@ -10,7 +10,7 @@ ABS_MODEL_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 def load_model(total_timesteps, config: Config, window: str, window_roll: int):
-    save_path = prepare_folder_structure(ABS_MODEL_PATH, config, 'model', config.seed, window_roll)
+    save_path = prepare_folder_structure(ABS_MODEL_PATH, config, 'model', window_roll)
     save_name = generate_filename(config, window, 'model')
     eval_freq = total_timesteps // config.episodes
 
@@ -56,7 +56,7 @@ def train_model(env, total_timesteps, val_env, config: Config, window: str, wind
 def _prepare_save_callback(eval_freq, save_model, config: Config, window: str, window_roll: int, seed: int,
                            overwrite_file: bool):
     if save_model:
-        save_path = prepare_folder_structure(ABS_MODEL_PATH, config, 'model', seed, window_roll)
+        save_path = prepare_folder_structure(ABS_MODEL_PATH, config, 'model', window_roll)
         save_name = generate_filename(config, window, 'model')
 
         # if overwrite is turned on or file does not exists we save the model

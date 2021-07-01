@@ -41,18 +41,17 @@ def generate_filename(config: Config, window: str, filetype: str = 'result'):
     return '-'.join('_'.join(field) for field in fields)
 
 
-def prepare_folder_structure(abs_origin_path, config: Config = None, foldertype: str = 'result', seed: int = 0,
-                             window_roll: int = 0):
+def prepare_folder_structure(abs_origin_path, config: Config = None, foldertype: str = 'result', window_roll: int = 0):
     folder_path = abs_origin_path
 
     if config:
         folder_list = dict(inspect.getmembers(config))
-        folder_list['window_roll'] = 'roll_' + str(window_roll)
-        folder_list['seed'] = 'seed_' + str(seed)
+        folder_list['seed'] = 'seed_' + str(config.seed)
 
         folder_levels = settings.FOLDER_LEVELS_RESULTS
         if foldertype == 'model':
             folder_levels = settings.FOLDER_LEVELS_MODELS
+            folder_list['window_roll'] = 'roll_' + str(window_roll)
 
         if not all(k in folder_list for k in folder_levels):
             raise ValueError('Some of the following entries not found in config: ', folder_levels)
