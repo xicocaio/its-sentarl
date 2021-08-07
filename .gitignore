@@ -132,3 +132,8 @@ dmypy.json
 #   not necessarily recommended:
 #   https://stackoverflow.com/questions/3041154/intellij-idea-9-10-what-folders-to-check-into-or-not-check-into-source-contro
 .idea/ 
+
+# project internal folders
+app/data/*.csv
+app/results/**/*.csv
+app/models/**/*.zip
