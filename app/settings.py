@@ -8,7 +8,7 @@ DATA_DIR = os.path.join(Path(BASE_DIR).parent, 'app', 'data')
 AVAILABLE_DATA = data.AVAILABLE_DATA
 
 STGS_BASE = ['bh', 'random']
-STGS_ALGO = ['vanilla', 'relesa']  # options: relesa, vanilla
+STGS_ALGO = ['vanilla', 'sentarl']  # options: sentarl, vanilla
 
 FREQUENCIES = ['hour']
 REWARD_FUNCTIONS = ['return']  # options: return, sharpe_ratio

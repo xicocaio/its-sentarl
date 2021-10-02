@@ -28,7 +28,7 @@ def load_model(total_timesteps, config: Config, window: str, window_roll: int):
 
 
 def train_model(env, total_timesteps, val_env, config: Config, window: str, window_roll: int,
-                overwrite_file: bool = True, save_model=True):
+                overwrite_file: bool = True, save_model=False):
     eval_freq = total_timesteps // config.episodes
 
     save_model_callback = _prepare_save_callback(eval_freq, save_model, config, window, window_roll, config.seed,

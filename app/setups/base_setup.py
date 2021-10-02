@@ -22,7 +22,7 @@ class BaseSetup(object):
             ('diff', self.pivot_window_size),
             ('hour_of_day_relative', self.pivot_window_size)]
 
-        if self.config.stg == 'relesa':
+        if self.config.stg == 'sentarl':
             # self.features.extend([('avg-sent', 3),
             #                       ('max-sent', 3)])
             # self.features.extend([('min-sent', 5), ('news_count_div', 5)])
