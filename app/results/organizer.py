@@ -8,7 +8,7 @@ FREQUENCIES = ['hour']
 SETUP_TYPES = ['rolling']
 ASSETS = ['aapl']
 TCS = [str(0.0025)]
-STGS = ['bh', 'vanilla', 'relesa']
+STGS = ['bh', 'vanilla', 'sentarl']
 WINDOW_TYPES = ['train', 'val', 'test']
 
 

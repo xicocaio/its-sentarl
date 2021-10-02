@@ -5,7 +5,7 @@ import settings
 class Config:
     def __init__(self,
                  name='default',
-                 stg='relesa',
+                 stg='sentarl',
                  algo='a2c',
                  asset='aapl',
                  episodes=1,

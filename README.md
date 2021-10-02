@@ -1,6 +1,6 @@
-# ITS-ReLeSa
+# ITS-SentARL
 
-Final Masters research project implementation ITS-ReLeSA => Inteligent Trading System: a Reinforcement Learning
+Final Masters research project implementation ITS-SentARL => Inteligent Trading System: a Reinforcement Learning
 Sentiment Aware Approach
 
 ## Stack
@@ -61,7 +61,7 @@ Then the arguments according to the desired modes are:
 
 ### Default
 
-* `stg` for selecting the strategy to run. Allows: `bh` for Buy and Hold (BH); `relesa` fpr the sentiment-aware RL
+* `stg` for selecting the strategy to run. Allows: `bh` for Buy and Hold (BH); `sentarl` fpr the sentiment-aware RL
   algorithm; `vanilla` for the sentiment-free version of the algorithm.
 * `asset` for selecting the asset to run trade. Allows: any asset present in the `data/__init__.py` file, with the
   correspoding `.csv` file in the `data` folder.
@@ -70,10 +70,10 @@ Then the arguments according to the desired modes are:
 * `epsiodes` for selecting the number of episodes to train. Allows: integer values only
 * `setup` for selecting the train/val window type of setup. Allows: `static`, `rolling`.
 
-Example to run default mode with ITS-ReLeSa using A2C
+Example to run default mode with ITS-SentARL using A2C
 
 ```bash
-python app mode=default setup=rolling stg=relesa asset=aapl algo=A2C episodes=1 setup='rolling'
+python app mode=default setup=rolling stg=sentarl asset=aapl algo=A2C episodes=1 setup='rolling'
 ```
 
 ### Routine
@@ -101,7 +101,7 @@ python app mode=consolidation
 ## Folder Structure
 
 ```
-its-relesa/
+its-sentarl/
 ├── app
 │   ├── common
 │   │   ├── __init__.py
