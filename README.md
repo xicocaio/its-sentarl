@@ -1,7 +1,7 @@
 # ITS-SentARL
 
-Final Masters research project implementation ITS-SentARL => Inteligent Trading System: a Reinforcement Learning
-Sentiment Aware Approach
+Final Masters research project implementation ITS-SentARL => Intelligent Trading System: a Sentiment-Aware Reinforcement Learning
+Sentiment Approach
 
 ## Stack
 
@@ -142,14 +142,14 @@ its-sentarl/
 * Root folder: Dependencies list and other metadata info.
   * `Pipfile`: Information about dependencies.
   * `README.md`: Hi.
-* app: Project settings and and other general use files.
+* app: Project settings and other general use files.
   * `settings.py`: Information regarding allowed assets, stgs and others.
 
 
 ## Further Improvements (TODOs)
 
 - The utils function inside common module is starting to become to entangled with details of the system, instead of
-  being self contained and separated from project particularities, maybe some of these methods should me moved elsewhere
+  being self-contained and separated from project particularities, maybe some of these methods should be moved elsewhere
   to other aggregation module.
 
 - The env is calculating its rewards and returns, and its fine to some extent, however the calculation of metrics should
