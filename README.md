@@ -1,7 +1,6 @@
 # ITS-SentARL
 
-Final Masters research project implementation ITS-SentARL => Inteligent Trading System: a Reinforcement Learning
-Sentiment Aware Approach
+Research project implementation for the ICAIF'21 publication and Master's Thesis. ITS-SentARL => Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach
 
 ## Stack
 
@@ -142,22 +141,45 @@ its-sentarl/
 * Root folder: Dependencies list and other metadata info.
   * `Pipfile`: Information about dependencies.
   * `README.md`: Hi.
-* app: Project settings and and other general use files.
+* app: Project settings and other general use files.
   * `settings.py`: Information regarding allowed assets, stgs and others.
 
 
-## Further Improvements (TODOs)
+## Citing the Project
+The pre-print article of this project is available in [Arxiv](https://arxiv.org/abs/2112.02095). To cite this repository in publications, please use the following bibtex citation:
 
-- The utils function inside common module is starting to become to entangled with details of the system, instead of
-  being self contained and separated from project particularities, maybe some of these methods should me moved elsewhere
-  to other aggregation module.
+```bibtex
+@inproceedings{LimaPaiva2021,
+address = {New York, NY, USA},
+author = {{Lima Paiva}, Francisco Caio and Felizardo, Leonardo Kanashiro and Bianchi, Reinaldo Augusto da Costa Bianchi and Costa, Anna Helena Reali},
+booktitle = {Proceedings of the Second ACM International Conference on AI in Finance},
+doi = {10.1145/3490354.3494445},
+url = {https://doi.org/10.1145/3490354.3494445},
+isbn = {978-1-4503-9148-1/21/11},
+month = {nov},
+pages = {1--9},
+publisher = {ACM},
+title = {{Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach}},
+year = {2021},
+archivePrefix = {arXiv},
+eprint = {2112.02095},
+primaryClass = {q-fin.TR},
+}
+```
 
-- The env is calculating its rewards and returns, and its fine to some extent, however the calculation of metrics should
-  probably be moved to a utils like class for general use purposes. Also, the env is doing part of the monitoring of
-  results, by storing results and all. It is not completely wrong if this is being used to calculate rewards. But,
-  currently it is being more used for monitoring of historic returns and actions. It could be the case that a historic
-  of actions, rewards, returns and other metrics be kept in the monitor or other such class, which concern would be to
-  keep track and monitor the model interaction with the env.
+## Important Components
+
+Sentment Extractor: 
+- [Full article](https://www.researchgate.net/publication/339962669_Assessing_Regression-Based_Sentiment_Analysis_Techniques_in_Financial_Texts)
+- [Source code](https://bit.ly/3kzau8G)
+
+Financial News Webcrawler:
+- [Source code](https://github.com/xicocaio/financial_web_crawler)
+
+## Acknowledgments
+
+This work was financed in part by Itaú Unibanco S.A. through the Programa de Bolsas Itaú (PBI) of the Centro de Ciência de Dados ([C2D](http://c2d.poli.usp.br/)), EP-USP), by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES Finance Code 001), Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq  grant 310085/2020-9 and 88882.333380/2019-01),and by the Center for Artificial Intelligence (C4AI-USP), with support from FAPESP (grant 2019/07665-4) and \textit{IBM Corporation}.
+Any views and opinions expressed in this article are those of the authors and do not necessarily reflect the official policy or position of the funding companies.
 
 ## Final considerations
 
