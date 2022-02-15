@@ -1,6 +1,8 @@
 # ITS-SentARL
 
-Research project implementation for the ICAIF'21 publication and Master's Thesis. ITS-SentARL => Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach
+Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach. Research project implementation for the ICAIF'21 publication and [F. C. Lima Paiva](https://www.linkedin.com/in/xicocaio/) (aka @xicocaio) Master's Thesis. 
+
+- [Full article pre-print](https://arxiv.org/abs/2112.02095)
 
 ## Stack
 
@@ -54,7 +56,7 @@ $ python app
 There are three modes for running the project, which can be selected using the following arg
 
 * `mode` with the allowed values: `dedault` for running a single configuration; `routine` for running several
-  confiugurations; `consolidation` for grouping all results files into one single large file.
+  configurations; `consolidation` for grouping all results files into one single large file.
 
 Then the arguments according to the desired modes are:
 
@@ -63,7 +65,7 @@ Then the arguments according to the desired modes are:
 * `stg` for selecting the strategy to run. Allows: `bh` for Buy and Hold (BH); `sentarl` fpr the sentiment-aware RL
   algorithm; `vanilla` for the sentiment-free version of the algorithm.
 * `asset` for selecting the asset to run trade. Allows: any asset present in the `data/__init__.py` file, with the
-  correspoding `.csv` file in the `data` folder.
+  corresponding `.csv` file in the `data` folder.
 * `algo` for selecting the RL algorithm to run. Allows: `a2c`, `ppo`, `dqn`. To add more algorithms add code to
   the `models\__init__.py` and `settings.py` files, given it is implemented by StableBaselines3.
 * `epsiodes` for selecting the number of episodes to train. Allows: integer values only
@@ -90,7 +92,7 @@ python app mode=routine routine_name=default
 
 ### Consolidation
 
-Example to conlidate all results files
+Example to consolidate all results files
 
 ```bash
 python app mode=consolidation
@@ -169,7 +171,7 @@ primaryClass = {q-fin.TR},
 
 ## Important Components
 
-Sentment Extractor: 
+Sentiment Extractor: 
 - [Full article](https://www.researchgate.net/publication/339962669_Assessing_Regression-Based_Sentiment_Analysis_Techniques_in_Financial_Texts)
 - [Source code](https://bit.ly/3kzau8G)
 
