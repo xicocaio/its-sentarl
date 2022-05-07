@@ -1,8 +1,12 @@
 # ITS-SentARL
 
-Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach. Research project implementation for the ICAIF'21 publication and [F. C. Lima Paiva](https://www.linkedin.com/in/xicocaio/) (aka @xicocaio) Master's Thesis. 
+***Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach*** research project implementation used in:
 
-- [Full article pre-print](https://arxiv.org/abs/2112.02095)
+1. Second ACM International Conference on AI in Finance (ICAIF'21) article
+    - [ACM official version](https://dl.acm.org/doi/10.1145/3490354.3494445)
+    - [Free pre-print version](https://arxiv.org/abs/2112.02095)
+2. [F. C. Lima Paiva](https://www.linkedin.com/in/xicocaio/) (aka @xicocaio) Master's Thesis.
+
 
 ## Stack
 
@@ -148,24 +152,27 @@ its-sentarl/
 
 
 ## Citing the Project
-The pre-print article of this project is available in [Arxiv](https://arxiv.org/abs/2112.02095). To cite this repository in publications, please use the following bibtex citation:
+The officially published article is available on [ACM](https://dl.acm.org/doi/10.1145/3490354.3494445), while the pre-print free version of this project is available on [arXiv](https://arxiv.org/abs/2112.02095). To cite this repository in publications, please use the following bibtex formated text:
 
 ```bibtex
 @inproceedings{LimaPaiva2021,
-address = {New York, NY, USA},
-author = {{Lima Paiva}, Francisco Caio and Felizardo, Leonardo Kanashiro and Bianchi, Reinaldo Augusto da Costa Bianchi and Costa, Anna Helena Reali},
-booktitle = {Proceedings of the Second ACM International Conference on AI in Finance},
-doi = {10.1145/3490354.3494445},
-url = {https://doi.org/10.1145/3490354.3494445},
-isbn = {978-1-4503-9148-1/21/11},
-month = {nov},
-pages = {1--9},
-publisher = {ACM},
-title = {{Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach}},
-year = {2021},
-archivePrefix = {arXiv},
-eprint = {2112.02095},
-primaryClass = {q-fin.TR},
+    author = {{Lima Paiva}, Francisco Caio and Felizardo, Leonardo Kanashiro and Bianchi, Reinaldo Augusto da Costa Bianchi and Costa, Anna Helena Reali},
+    title = {Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach},
+    year = {2021},
+    isbn = {9781450391481},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3490354.3494445},
+    doi = {10.1145/3490354.3494445},
+    booktitle = {Proceedings of the Second ACM International Conference on AI in Finance},
+    articleno = {40},
+    numpages = {9},
+    keywords = {deep reinforcement learning, sentiment analysis, stock markets},
+    location = {Virtual Event},
+    series = {ICAIF '21},
+    archivePrefix = {arXiv},
+    eprint = {2112.02095},
+    primaryClass = {q-fin.TR}
 }
 ```
 
