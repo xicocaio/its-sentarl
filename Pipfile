@@ -7,10 +7,11 @@ verify_ssl = true
 
 [packages]
 pandas = "*"
-torch = "==1.6.0"
-torchvision = "==0.7.0"
-stable-baselines3 = {extras = ["extra"], version = "==1.0"}
+torch = "==1.12.1"
+torchvision = "*"
+stable-baselines3 = {extras = ["extra"], version = "==1.6.0"}
 quantstats = "*"
+gym = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
