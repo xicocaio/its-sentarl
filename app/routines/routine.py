@@ -14,7 +14,7 @@ ROUTINE_DEFAULT = {'setup': 'rolling',
 
 
 class Routine(object):
-    def __init__(self, routine_name, target_episode=50):
+    def __init__(self, routine_name, target_episodes=[50]):
         self.routine_name = routine_name
 
         self.config_name = None
@@ -26,11 +26,11 @@ class Routine(object):
         self.stgs = settings.STGS_ALGO
         # self.stgs = settings.STGS_BASE
         self.seeds = [42, 1, 6888, 13, 17]
-        self.episodes = target_episode
+        self.episodes = target_episodes
         self.load_model = False
 
         if self.routine_name == 'load_model':
-            self.episodes = target_episode
+            self.episodes = target_episodes
             self.load_model = True
 
     def run(self):
@@ -41,29 +41,31 @@ class Routine(object):
         print('Frequencies: ', self.frequencies)
         print('Reward Functions: ', self.reward_functions)
         print('Seed: ', self.seeds)
+        print('Episodes: ', self.episodes)
         print('-------------------------------')
 
         current_time = datetime.datetime.now()
         print('\n>>> Starting routine `{}` at {} <<<'.format(self.routine_name, current_time))
 
         specs = list(itertools.product(*[self.frequencies, self.tcs, self.assets, self.reward_functions, self.seeds,
-                                         self.stgs]))
+                                         self.stgs, self.episodes]))
         total_runs = remaining_runs = len(specs)
 
         initial_p_time = time.process_time()
         run_count = 1
         elapsed_t = []
         # continue_list = [('hour', 0.0025, 'aapl', 'return', 42, 'vanilla')]
-        for frequency, tc, asset, reward_function, seed, stg in specs:
-            self.config_name = 'min-sent-5' if stg == 'relesa' else 'default'
-            cfg = Config(name=self.config_name, seed=seed, stg=stg, asset=asset, episodes=self.episodes,
-                         setup=self.setup, frequency=frequency, reward_function=reward_function, transaction_cost=tc,
-                         sb_verbose=False, ep_verbose=False)
+        for frequency, tc, asset, reward_function, seed, stg, episode in specs:
+            self.config_name = 'min-sent-5' if stg == 'sentarl' else 'default'
+            cfg = Config(name=self.config_name, seed=seed, stg=stg, asset=asset, episodes=episode, setup=self.setup,
+                         frequency=frequency, reward_function=reward_function, transaction_cost=tc, sb_verbose=False,
+                         ep_verbose=False)
 
             initial_run_t = time.process_time()
-            print('\n--- Starting run {}/{} for: {}, {}, tc {}, {}, {}, seed {} ---'.format(run_count, total_runs, stg,
-                                                                                            asset, tc, frequency,
-                                                                                            reward_function, seed))
+            print('\n--- Starting run {}/{} for: {}, {}, tc {}, {}, {}, seed {}, episodes {} ---'.format(run_count,
+                                                                                            total_runs, stg, asset, tc,
+                                                                                            frequency, reward_function,
+                                                                                            seed, episode))
 
             # if (frequency, tc, asset, reward_function, seed, stg) in continue_list:
             #     run_count += 1
