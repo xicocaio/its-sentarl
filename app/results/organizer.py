@@ -37,8 +37,10 @@ def singlefile_consolidation(exclude=[]):
             elif file.endswith('test.csv'):
                 dfs_test.append(pd.read_csv(abs_file, sep=';'))
 
-    dest_fname = 'final_experiments_1_asset_train_val'
-    pd.concat(dfs_train_val).to_csv(os.path.join(dest_path, dest_fname + '.csv'), index=False, sep=';')
+    if dfs_train_val:
+        dest_fname = 'final_experiments_1_asset_train_val'
+        pd.concat(dfs_train_val).to_csv(os.path.join(dest_path, dest_fname + '.csv'), index=False, sep=';')
 
-    dest_fname = 'final_experiments_1_asset_test'
-    pd.concat(dfs_test).to_csv(os.path.join(dest_path, dest_fname + '.csv'), index=False, sep=';')
+    if dfs_test:
+        dest_fname = 'final_experiments_1_asset_test'
+        pd.concat(dfs_test).to_csv(os.path.join(dest_path, dest_fname + '.csv'), index=False, sep=';')
