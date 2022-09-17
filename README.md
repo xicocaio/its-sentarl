@@ -8,6 +8,10 @@
 2. [F. C. Lima Paiva](https://www.linkedin.com/in/xicocaio/) (aka @xicocaio) Master's Thesis.
 
 
+
+![ITS-SentARL general architecture. Image source: Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach presented in the Second ACM International Conference on AI in Finance (ICAIF'21)](docs/\_static/img/general_architecture_line_v2_image.png?raw=true "ITS-SentARL general architecture. Image source: Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach presented in the Second ACM International Conference on AI in Finance (ICAIF'21)")
+
+
 ## Stack
 
 The stack bellow was used mostly due to its ease of installation, configuration, and also efficiency and portability.
