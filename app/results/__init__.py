@@ -1,2 +1,2 @@
-from .monitor import ResultsMonitor
-from .organizer import singlefile_consolidation
+from .monitor import ResultsMonitor  # noqa F401
+from .organizer import singlefile_consolidation  # noqa F401

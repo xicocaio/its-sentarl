@@ -1,2 +1,2 @@
-from .static import StaticSetup
-from .rolling_window import RollingWindowSetup
+from .static import StaticSetup  # noqa F401
+from .rolling_window import RollingWindowSetup  # noqa F401
