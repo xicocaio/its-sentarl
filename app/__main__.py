@@ -11,7 +11,7 @@ from setups import StaticSetup, RollingWindowSetup
 from results import singlefile_consolidation
 from routines import Routine
 
-logging.dictConfig(settings.LOGGING_CONFIG)
+logging.config.dictConfig(settings.LOGGING_CONFIG)
 
 NUMERICAL_INPUT_KEYS = [
     "episodes",

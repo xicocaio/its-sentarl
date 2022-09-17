@@ -18,7 +18,8 @@ from envs import (  # noqa F401
 )  # do not remove this import or env make will break
 from common import Config
 
-logging.dictConfig(settings.LOGGING_CONFIG)
+
+logging.config.dictConfig(settings.LOGGING_CONFIG)
 
 
 class BaseSetup(object):

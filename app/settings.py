@@ -55,11 +55,11 @@ LOGGING_CONFIG = {
         "stream_handler": {
             "class": "logging.StreamHandler",
             "formatter": "default_formatter",
-            "level": "logging.INFO",
+            "level": "INFO",
         },
     },
     "root": {
         "handlers": ["stream_handler"],
-        "level": "logging.INFO",
+        "level": "INFO",
     },
 }

@@ -10,7 +10,7 @@ import settings
 from common import Config
 from setups import StaticSetup, RollingWindowSetup
 
-logging.dictConfig(settings.LOGGING_CONFIG)
+logging.config.dictConfig(settings.LOGGING_CONFIG)
 
 
 ROUTINE_DEFAULT = {
