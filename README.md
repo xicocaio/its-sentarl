@@ -3,8 +3,8 @@
 ***Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach*** research project implementation used in:
 
 1. Second ACM International Conference on AI in Finance (ICAIF'21) article
-    - [ACM official version](https://dl.acm.org/doi/10.1145/3490354.3494445)
-    - [Free pre-print version](https://arxiv.org/abs/2112.02095)
+    - [ACM Official Version](https://dl.acm.org/doi/10.1145/3490354.3494445)
+    - [Free pre-print version (arXiv)](https://arxiv.org/abs/2112.02095)
 2. [F. C. Lima Paiva](https://www.linkedin.com/in/xicocaio/) (aka @xicocaio) Master's Thesis.
 
 
@@ -152,7 +152,8 @@ its-sentarl/
 
 
 ## Citing the Project
-The officially published article is available on [ACM](https://dl.acm.org/doi/10.1145/3490354.3494445), while the pre-print free version of this project is available on [arXiv](https://arxiv.org/abs/2112.02095). To cite this repository in publications, please use the following bibtex formated text:
+
+To cite this repository in publications, please use the following bibtex formated text:
 
 ```bibtex
 @inproceedings{LimaPaiva2021,
@@ -176,13 +177,17 @@ The officially published article is available on [ACM](https://dl.acm.org/doi/10
 }
 ```
 
-## Important Components
+## Suplementary Material and Components
 
-Sentiment Extractor: 
-- [Full article](https://www.researchgate.net/publication/339962669_Assessing_Regression-Based_Sentiment_Analysis_Techniques_in_Financial_Texts)
+Reading:
+- [Full Article (ACM)](https://dl.acm.org/doi/10.1145/3490354.3494445)
+- [pre-print version (arXiv)](https://arxiv.org/abs/2112.02095)
+
+Sentiment extractor module details:
+- [Article](https://www.researchgate.net/publication/339962669_Assessing_Regression-Based_Sentiment_Analysis_Techniques_in_Financial_Texts)
 - [Source code](https://bit.ly/3kzau8G)
 
-Financial News Webcrawler:
+Financial news webcrawler:
 - [Source code](https://github.com/xicocaio/financial_web_crawler)
 
 ## Acknowledgments

@@ -1,3 +1,6 @@
+# Built-in imports
+import logging
+
 # internal imports
 import settings
 from .base_setup import BaseSetup
@@ -9,6 +12,7 @@ from common import Config
 class StaticSetup(BaseSetup):
     def __init__(self, config: Config):
         super(StaticSetup, self).__init__(config=config)
+        self.logger = logging.getLogger(__name__)
 
         df_train, df_test, df_val = split_data(
             self.df,
@@ -26,7 +30,9 @@ class StaticSetup(BaseSetup):
             self.total_timesteps = self.config.episodes * (
                 frame_bound_train[1] - frame_bound_train[0]
             )
-            print("Total training timesteps: {}".format(self.total_timesteps))
+            self.logger.info(
+                f"Total training timesteps: {self.total_timesteps}"
+            )
 
         additional_info = dict(
             {
@@ -89,7 +95,7 @@ class StaticSetup(BaseSetup):
 
                 if done:
                     if self.config.ep_verbose:
-                        print("info:", info)
+                        self.logger.info(f"{info}")
                     break
 
         env.close()

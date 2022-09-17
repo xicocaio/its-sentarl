@@ -1,5 +1,8 @@
+# Built-in imports
 import sys
 import ast
+import logging
+import logging.config
 
 # internal imports
 import settings
@@ -7,6 +10,8 @@ from common import Config
 from setups import StaticSetup, RollingWindowSetup
 from results import singlefile_consolidation
 from routines import Routine
+
+logging.dictConfig(settings.LOGGING_CONFIG)
 
 NUMERICAL_INPUT_KEYS = [
     "episodes",
@@ -29,6 +34,8 @@ def verify_allowed_input(inputs):
 
 
 def main(**kwargs):
+    logger = logging.getLogger(__name__)
+
     adjusted_kwargs = kwargs.copy()
     for k, v in kwargs.items():
         adjusted_kwargs[k] = (
@@ -59,7 +66,7 @@ def main(**kwargs):
         Routine(routine_name).run()
 
     # consolidation always run
-    print("\n--- Starting consolidation ---\n")
+    logger.info("--- Starting consolidation ---")
     singlefile_consolidation()
 
 

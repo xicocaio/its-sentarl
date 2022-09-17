@@ -1,7 +1,12 @@
+# Built-in imports
+import logging
+import logging.config
+
+# Data related imports
+import numpy as np
+
 # RL imports
 import gym
-
-import numpy as np
 
 # internal imports
 import settings
@@ -12,6 +17,8 @@ from envs import (  # noqa F401
     StockExchangeEnv,
 )  # do not remove this import or env make will break
 from common import Config
+
+logging.dictConfig(settings.LOGGING_CONFIG)
 
 
 class BaseSetup(object):

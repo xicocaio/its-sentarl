@@ -1,10 +1,17 @@
+# Built-in imports
 import time
 import itertools
 import datetime
+import logging
+import logging.config
 
+# Internal imports
 import settings
 from common import Config
 from setups import StaticSetup, RollingWindowSetup
+
+logging.dictConfig(settings.LOGGING_CONFIG)
+
 
 ROUTINE_DEFAULT = {
     "setup": "rolling",
@@ -17,6 +24,8 @@ ROUTINE_DEFAULT = {
 
 class Routine(object):
     def __init__(self, routine_name, target_episodes=[50]):
+        self.logger = logging.getLogger(__name__)
+
         self.routine_name = routine_name
 
         self.config_name = None
@@ -36,22 +45,17 @@ class Routine(object):
             self.load_model = True
 
     def run(self):
-        print("\n### Routine option selected ###")
-        print("------- Routine Summary -------")
-        print("Assets: ", self.assets)
-        print("Transaction Costs: ", self.tcs)
-        print("Frequencies: ", self.frequencies)
-        print("Reward Functions: ", self.reward_functions)
-        print("Seed: ", self.seeds)
-        print("Episodes: ", self.episodes)
-        print("-------------------------------")
+        self.logger.info("### Routine option selected ###")
+        self.logger.info("------- Routine Summary -------")
+        self.logger.info(f"Assets: {self.assets}")
+        self.logger.info(f"Transaction Costs: {self.tcs}")
+        self.logger.info(f"Frequencies: {self.frequencies}")
+        self.logger.info(f"Reward Functions: {self.reward_functions}")
+        self.logger.info(f"Seed: {self.seeds}")
+        self.logger.info(f"Episodes: {self.episodes}")
 
         current_time = datetime.datetime.now()
-        print(
-            "\n>>> Starting routine `{}` at {} <<<".format(
-                self.routine_name, current_time
-            )
-        )
+        self.logger.info(f">>> Starting routine `{self.routine_name}` <<<")
 
         specs = list(
             itertools.product(
@@ -88,7 +92,7 @@ class Routine(object):
             )
 
             initial_run_t = time.process_time()
-            print(
+            self.logger.info(
                 f"\n--- Starting run {run_count}/{total_runs} for: {stg}, \
                     {asset}, tc {tc}, {frequency}, {reward_function}, \
                     seed {seed}, episode {episode} ---"
@@ -105,7 +109,7 @@ class Routine(object):
             t = time.process_time()
             # t = datetime.datetime.now()
             elapsed_t.append(t - initial_run_t)
-            print(
+            self.logger.info(
                 f"--- Finishing run #{run_count} for: {stg}, {asset}, \
                     tc {tc}, {frequency}, {reward_function} \
                     with elapsed time {elapsed_t[0]:.2f}s ---"
@@ -122,15 +126,14 @@ class Routine(object):
             current_time = datetime.datetime.now()
             estimated_end_time = current_time + remaining_time
             if remaining_runs > 0:
-                print(
-                    "\nEstimated time of finish: {}; remaining ({})".format(
-                        estimated_end_time, remaining_time
-                    )
+                self.logger.info(
+                    f"Estimated time of finish: {estimated_end_time}; \
+                        remaining ({remaining_time})"
                 )
 
         current_time = datetime.datetime.now()
         elapsed_t = t - initial_p_time
-        print(
-            f"\n>>> Ending routine {self.routine_name} at {current_time} \
+        self.logger.info(
+            f">>> Ending routine {self.routine_name} \
                 with a total runtime of {elapsed_t:.2f}s <<<"
         )

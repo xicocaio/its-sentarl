@@ -1,9 +1,21 @@
+# Built-in imports
 from enum import Enum
-
 import numpy as np
 from gym import spaces
+import logging
 
+# Internal imports
 from .exchange import ExchangeEnv
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger("escrita_dados")
+# logger = logging.getLogger(__name__)
 
 
 class Actions(Enum):
