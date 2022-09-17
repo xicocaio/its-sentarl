@@ -1,17 +1,17 @@
 import gym
-from gym import spaces
 from gym.utils import seeding
 
-from enum import Enum
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 # import matplotlib.pyplot as plt
 
+
 class ExchangeEnv(gym.Env):
     """Base stock trading environment for OpenAI gym"""
-    metadata = {'render.modes': ['human']}
+
+    metadata = {"render.modes": ["human"]}
 
     def __init__(self, action_space, observation_space, start_t, end_t):
         super(ExchangeEnv, self).__init__()
@@ -27,8 +27,8 @@ class ExchangeEnv(gym.Env):
         self._action_value_history = start_t * [None]
 
         # agent's performance market metrics
-        self._total_return = 0.
-        self._total_reward = 0.
+        self._total_return = 0.0
+        self._total_reward = 0.0
 
         # simulation params
         self._start_t = start_t
@@ -42,7 +42,7 @@ class ExchangeEnv(gym.Env):
         return [seed]
 
     def step(self, action):
-        err_msg = "%r (%s) invalid".format(action, type(action))
+        err_msg = f"{action} ({type(action)}) invalid"
         assert self.action_space.contains(action), err_msg
 
         last_step = True if self._current_t == self._end_t else False
@@ -81,8 +81,8 @@ class ExchangeEnv(gym.Env):
         self._current_t = self._start_t
         self._last_trade_tick = self._current_t - 1
         self._action_value = None
-        self._total_return = 0.
-        self._total_reward = 0.
+        self._total_return = 0.0
+        self._total_reward = 0.0
         self._action_value_history = self._start_t * [None]
         self._reward_history = self._start_t * [None]
         self._return_history = self._start_t * [None]
@@ -93,8 +93,9 @@ class ExchangeEnv(gym.Env):
 
         return self._get_observation()
 
-    # This render was not designed to run step by step, it should run only at the end of episode
-    def render(self, mode='human'):
+    # This render was not designed to run step by step,
+    # it should run only at the end of episode
+    def render(self, mode="human"):
         self._plot_history()
 
     def close(self):
@@ -143,18 +144,16 @@ class ExchangeEnv(gym.Env):
                 elif self._return_history[i] >= 0:
                     pos_rewards.append(tick)
 
-        ax1.plot(short_ticks, self._prices[short_ticks], 'bv')
-        ax1.plot(long_ticks, self._prices[long_ticks], 'b^')
-        ax1.plot(neutral_ticks, self._prices[neutral_ticks], 'b_')
+        ax1.plot(short_ticks, self._prices[short_ticks], "bv")
+        ax1.plot(long_ticks, self._prices[long_ticks], "b^")
+        ax1.plot(neutral_ticks, self._prices[neutral_ticks], "b_")
 
         reward_array = np.asarray(self._return_history)
 
-        ax2.bar(neg_rewards, reward_array[neg_rewards], color='r')
-        ax2.bar(pos_rewards, reward_array[pos_rewards], color='g')
+        ax2.bar(neg_rewards, reward_array[neg_rewards], color="r")
+        ax2.bar(pos_rewards, reward_array[pos_rewards], color="g")
 
-        fig.suptitle(
-            "Total Profit: %.6f" % self._total_reward
-        )
+        fig.suptitle("Total Profit: %.6f" % self._total_reward)
 
     def _update_history(self, info):
         if not self.history:

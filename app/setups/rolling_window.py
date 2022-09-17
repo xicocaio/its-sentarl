@@ -1,3 +1,6 @@
+# Built-in imports
+import logging
+
 # internal imports
 import settings
 from .base_setup import BaseSetup
@@ -10,6 +13,7 @@ from common import Config
 class RollingWindowSetup(BaseSetup):
     def __init__(self, config: Config, load_model: bool = False):
         super(RollingWindowSetup, self).__init__(config=config)
+        self.logger = logging.getLogger(__name__)
 
         self.load_model = load_model
         self.k_rolls = 5
@@ -26,7 +30,9 @@ class RollingWindowSetup(BaseSetup):
             self.total_timesteps = self.config.episodes * (
                 self.train_size - self.pivot_window_size
             )
-            print("Total training timesteps: {}".format(self.total_timesteps))
+            self.logger.info(
+                f"Total training timesteps: {self.total_timesteps}"
+            )
 
     def run(self):
         for roll, df_item in enumerate(self.dfs):
@@ -105,7 +111,7 @@ class RollingWindowSetup(BaseSetup):
 
                 if done:
                     if self.config.ep_verbose:
-                        print("info:", info)
+                        self.logger.info("info")
                     break
 
         env.close()

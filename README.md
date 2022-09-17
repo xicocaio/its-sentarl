@@ -3,9 +3,14 @@
 ***Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach*** research project implementation used in:
 
 1. Second ACM International Conference on AI in Finance (ICAIF'21) article
-    - [ACM official version](https://dl.acm.org/doi/10.1145/3490354.3494445)
-    - [Free pre-print version](https://arxiv.org/abs/2112.02095)
+    - [ACM Official Version](https://dl.acm.org/doi/10.1145/3490354.3494445)
+    - [Free pre-print version (arXiv)](https://arxiv.org/abs/2112.02095)
 2. [F. C. Lima Paiva](https://www.linkedin.com/in/xicocaio/) (aka @xicocaio) Master's Thesis.
+
+**ITS-SentARL general architecture**
+
+![ITS-SentARL general architecture.](docs/static/img/general_architecture_line_v2_image.png?raw=true "Image source -> Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach article presented in the Second ACM International Conference on AI in Finance (ICAIF'21)")
+**Image source**: *Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach article presented in the Second ACM International Conference on AI in Finance (ICAIF'21)*
 
 
 ## Stack
@@ -59,7 +64,7 @@ $ python app
 
 There are three modes for running the project, which can be selected using the following arg
 
-* `mode` with the allowed values: `dedault` for running a single configuration; `routine` for running several
+* `mode` with the allowed values: `single` for running a single configuration; `routine` for running several
   configurations; `consolidation` for grouping all results files into one single large file.
 
 Then the arguments according to the desired modes are:
@@ -72,13 +77,13 @@ Then the arguments according to the desired modes are:
   corresponding `.csv` file in the `data` folder.
 * `algo` for selecting the RL algorithm to run. Allows: `a2c`, `ppo`, `dqn`. To add more algorithms add code to
   the `models\__init__.py` and `settings.py` files, given it is implemented by StableBaselines3.
-* `epsiodes` for selecting the number of episodes to train. Allows: integer values only
+* `episodes` for selecting the number of episodes to train. Allows: integer values only
 * `setup` for selecting the train/val window type of setup. Allows: `static`, `rolling`.
 
 Example to run default mode with ITS-SentARL using A2C
 
 ```bash
-python app mode=default setup=rolling stg=sentarl asset=aapl algo=A2C episodes=1 setup='rolling'
+python app mode=single setup=rolling stg=sentarl asset=aapl algo=A2C episodes=1 setup='rolling'
 ```
 
 ### Routine
@@ -152,7 +157,8 @@ its-sentarl/
 
 
 ## Citing the Project
-The officially published article is available on [ACM](https://dl.acm.org/doi/10.1145/3490354.3494445), while the pre-print free version of this project is available on [arXiv](https://arxiv.org/abs/2112.02095). To cite this repository in publications, please use the following bibtex formated text:
+
+To cite this repository in publications, please use the following bibtex formated text:
 
 ```bibtex
 @inproceedings{LimaPaiva2021,
@@ -176,13 +182,17 @@ The officially published article is available on [ACM](https://dl.acm.org/doi/10
 }
 ```
 
-## Important Components
+## Suplementary Material and Components
 
-Sentiment Extractor: 
-- [Full article](https://www.researchgate.net/publication/339962669_Assessing_Regression-Based_Sentiment_Analysis_Techniques_in_Financial_Texts)
+Reading:
+- [Full Article (ACM)](https://dl.acm.org/doi/10.1145/3490354.3494445)
+- [pre-print version (arXiv)](https://arxiv.org/abs/2112.02095)
+
+Sentiment extractor module details:
+- [Article](https://www.researchgate.net/publication/339962669_Assessing_Regression-Based_Sentiment_Analysis_Techniques_in_Financial_Texts)
 - [Source code](https://bit.ly/3kzau8G)
 
-Financial News Webcrawler:
+Financial news webcrawler:
 - [Source code](https://github.com/xicocaio/financial_web_crawler)
 
 ## Acknowledgments
