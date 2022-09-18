@@ -17,13 +17,13 @@
 
 The stack bellow was used mostly due to its ease of installation, configuration, and also efficiency and portability.
 
-* Language: Python (3.7.4)
-* RL Environment: OpenAI gym (0.18.3)
-* RL engine: StableBaselines3 (1.0)
+* Language: Python (3.8.10)
+* RL Environment: OpenAI gym (0.21.0)
+* RL engine: StableBaselines3 (1.6.0)
 
 ## Pre-installation
 
-This system was developed in Ubuntu 16.04 but will work properly on any other Operational System(OS X, Windows, etc.).
+This system was originally developed in Ubuntu 16.04 but will work properly on any other Operational System(OS X, Windows, etc.).
 
 However, this guide will only include instructions for plugins and packages that are not already installed on this OS.
 For this reason, we assume that technologies like a python interpreter and pipenv are ready for use, and should not be
