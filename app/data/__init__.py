@@ -6,20 +6,20 @@ AVAILABLE_DATA = {
         "type": "stocks",
         "frequency": "hour",
     },
-    "amzn": {
-        "fname": "ready_amzn_hour_duska_2018-01-02_2020-12-31",
-        "index_col": "datetime",
-        "name": "Amazon",
-        "type": "stocks",
-        "frequency": "hour",
-    },
-    "ba": {
-        "fname": "ready_ba_hour_duska_2018-01-02_2020-12-31",
-        "index_col": "datetime",
-        "name": "Boeing",
-        "type": "stocks",
-        "frequency": "hour",
-    },
+    # "amzn": {
+    #     "fname": "ready_amzn_hour_duska_2018-01-02_2020-12-31",
+    #     "index_col": "datetime",
+    #     "name": "Amazon",
+    #     "type": "stocks",
+    #     "frequency": "hour",
+    # },
+    # "ba": {
+    #     "fname": "ready_ba_hour_duska_2018-01-02_2020-12-31",
+    #     "index_col": "datetime",
+    #     "name": "Boeing",
+    #     "type": "stocks",
+    #     "frequency": "hour",
+    # },
     # 'btcusd': {
     #     'fname': 'ready_btcusd_hour_duska_2018-01-01_2020-12-31',
     #     'index_col': 'datetime',
@@ -27,13 +27,13 @@ AVAILABLE_DATA = {
     #     'type': 'stocks',
     #     'frequency': 'hour'
     # },
-    "dis": {
-        "fname": "ready_dis_hour_duska_2018-01-02_2020-12-31",
-        "index_col": "datetime",
-        "name": "Disney",
-        "type": "stocks",
-        "frequency": "hour",
-    },
+    # "dis": {
+    #     "fname": "ready_dis_hour_duska_2018-01-02_2020-12-31",
+    #     "index_col": "datetime",
+    #     "name": "Disney",
+    #     "type": "stocks",
+    #     "frequency": "hour",
+    # },
     # 'ethusd': {
     #     'fname': 'ready_ethusd_hour_duska_2018-01-01_2020-12-31',
     #     'index_col': 'datetime',

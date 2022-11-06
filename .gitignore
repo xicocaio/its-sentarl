@@ -135,5 +135,6 @@ dmypy.json
 
 # project internal folders
 app/data/*.csv
+!app/data/ready_aapl_hour_duska_2018-01-02_2020-12-31.csv
 app/results/**/*.csv
 app/models/**/*.zip
