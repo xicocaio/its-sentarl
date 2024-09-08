@@ -3,7 +3,7 @@ import time
 from typing import Any, Dict, Tuple
 
 # RL imports
-import gym
+import gymnasium as gym
 import numpy as np
 
 # internal imports
@@ -108,19 +108,19 @@ class ResultsMonitor(gym.Wrapper):
         return self.env.reset(**kwargs)
 
     def step(
-        self, action: np.ndarray
-    ) -> Tuple[np.ndarray, float, bool, Dict[Any, Any]]:
+        self, action: int
+    ) -> Tuple[np.ndarray, float, bool, bool, Dict[Any, Any]]:
         """
         Step the environment with the given action
 
-        :param action: (np.ndarray) the action
+        :param action: (int) the action
         :return: (Tuple[np.ndarray, float, bool, Dict[Any, Any]]) observation,
             reward, done, information
         """
         if self.needs_reset:
             raise RuntimeError("Tried to step environment that needs reset")
 
-        observation, reward, done, info = self.env.step(action)
+        observation, reward, done, _, info = self.env.step(action)
         self.rewards.append(reward)
         self.total_steps += 1
 
@@ -157,7 +157,7 @@ class ResultsMonitor(gym.Wrapper):
                         {**self.base_result_values, **ep_info, **result_values}
                     )
 
-        return observation, reward, done, info
+        return observation, reward, done, False, info
 
     def close(self):
         """

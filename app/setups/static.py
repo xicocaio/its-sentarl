@@ -87,11 +87,11 @@ class StaticSetup(BaseSetup):
             env = self.env_test
 
         for _ in range(test_runs):
-            observation = env.reset()
+            observation, _ = env.reset()
 
             while True:
                 action = self._get_stg_action(env, observation, model)
-                observation, _, done, info = env.step(action)
+                observation, _, done, _, info = env.step(action)
 
                 if done:
                     if self.config.ep_verbose:

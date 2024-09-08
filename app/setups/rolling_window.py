@@ -92,26 +92,18 @@ class RollingWindowSetup(BaseSetup):
                 self._run_window(envs["test"], model)
 
     def _run_window(self, env, model=None):
-        # test_runs = (
-        #     self.test_runs
-        #     if self.stg != "bh"
-        #     and window == "test"
-        #     and not self.deterministic_test
-        #     else 1
-        # )
-
         test_runs = 1
 
         for k in range(test_runs):
-            observation = env.reset()
+            observation, _ = env.reset()
 
             while True:
                 action = self._get_stg_action(env, observation, model)
-                observation, reward, done, info = env.step(action)
+                observation, _, done, _, info = env.step(action)
 
                 if done:
                     if self.config.ep_verbose:
-                        self.logger.info("info")
+                        self.logger.info(info)
                     break
 
         env.close()
@@ -153,7 +145,7 @@ class RollingWindowSetup(BaseSetup):
         dfs = []
         df_remaining = self.df.copy()
 
-        # adjusting adopted_size depending on thr use of a val set
+        # adjusting adopted_size depending on the use of a validation set
         adopted_size = (
             self.train_size + 2 * self.test_size
             if self.use_val

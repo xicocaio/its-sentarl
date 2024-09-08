@@ -1,8 +1,12 @@
 # Built-in imports
 from enum import Enum
 import numpy as np
-from gym import spaces
+from gymnasium import spaces
 import logging
+
+# AssertionError: action space does not inherit from `gym.spaces.Space`,
+# actual type: <class 'gymnasium.spaces.discrete.Discrete'>
+
 
 # Internal imports
 from .exchange import ExchangeEnv
@@ -192,6 +196,16 @@ class StockExchangeEnv(ExchangeEnv):
         self._reward_history.append(step_reward)
 
         return step_reward, step_return, sr
+
+    def _get_info(self, step_return, sr):
+        return dict(
+            date=self._get_current_date(),
+            step_return=step_return,
+            sharpe_ratio=sr,
+            total_return=self._total_return,
+            total_reward=self._total_reward,
+            action_value=self._action_value,
+        )
 
     def _get_observation(self):
         # selecting current complete look-back window of features
