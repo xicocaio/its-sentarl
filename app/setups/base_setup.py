@@ -6,7 +6,7 @@ import logging.config
 import numpy as np
 
 # RL imports
-import gym
+import gymnasium as gym
 
 # internal imports
 import settings
@@ -69,9 +69,10 @@ class BaseSetup(object):
                 else env.action_space.high
             )
         else:
-            action, _states = model.predict(
+            (action, _states,) = model.predict(
                 observation, deterministic=self.config.deterministic_test
             )
+            action = action.item()  # converting action to a single integer
 
         return action
 
@@ -90,21 +91,25 @@ class BaseSetup(object):
         )
 
     def prep_data(self, df):
-        df["diff"] = np.insert(np.diff(df["Close"].to_numpy()), 0, 0)
-        df["hour_of_day_relative"] = df["hour_of_day"] / 24
-        df["day_of_week_relative"] = df["day_of_week"] / 7
-        df["close_norm"] = (
-            2
-            * (df["Close"] - df["Close"].min())
-            / (df["Close"].max() - df["Close"].min())
-            - 1
+        df = df.assign(diff=np.insert(np.diff(df["Close"].to_numpy()), 0, 0))
+        df = df.assign(hour_of_day_relative=df["hour_of_day"] / 24)
+        df = df.assign(day_of_week_relative=df["day_of_week"] / 7)
+        df = df.assign(
+            close_norm=(
+                2
+                * (df["Close"] - df["Close"].min())
+                / (df["Close"].max() - df["Close"].min())
+                - 1
+            )
         )
-        df["news_count_div"] = df["news-count"] / 10
+        df = df.assign(news_count_div=df["news-count"] / 10)
+
+        return df
 
     def _prepare_env(
         self, df, frame_bound, window, additional_info={}, overwrite_file=None
-    ):
-        self.prep_data(df)
+    ) -> ResultsMonitor:
+        df = self.prep_data(df)
         env_maker = self._env_maker(df, frame_bound)
         check_env(env_maker())
 

@@ -14,6 +14,11 @@ class StaticSetup(BaseSetup):
         super(StaticSetup, self).__init__(config=config)
         self.logger = logging.getLogger(__name__)
 
+        # For now this overwrite file flag is being incorreclty used
+        # and it is currently coupled with results csv header funcionalities
+        # Setting this as True, to force all files to start from sratch new
+        overwrite_file = True
+
         df_train, df_test, df_val = split_data(
             self.df,
             self.pivot_window_size,
@@ -52,12 +57,21 @@ class StaticSetup(BaseSetup):
             frame_bound_train,
             "train",
             additional_info=additional_info,
+            overwrite_file=overwrite_file,
         )
         self.env_val = self._prepare_env(
-            df_val, frame_bound_val, "val", additional_info=additional_info
+            df_val,
+            frame_bound_val,
+            "val",
+            additional_info=additional_info,
+            overwrite_file=overwrite_file,
         )
         self.env_test = self._prepare_env(
-            df_test, frame_bound_test, "test", additional_info=additional_info
+            df_test,
+            frame_bound_test,
+            "test",
+            additional_info=additional_info,
+            overwrite_file=overwrite_file,
         )
 
     def _run_window(self, window: str, model: object = None):
@@ -87,13 +101,13 @@ class StaticSetup(BaseSetup):
             env = self.env_test
 
         for _ in range(test_runs):
-            observation = env.reset()
+            observation, _ = env.reset()
 
             while True:
                 action = self._get_stg_action(env, observation, model)
-                observation, _, done, info = env.step(action)
+                observation, _, terminated, _, info = env.step(action)
 
-                if done:
+                if terminated:
                     if self.config.ep_verbose:
                         self.logger.info(f"{info}")
                     break

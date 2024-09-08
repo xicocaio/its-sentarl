@@ -13,13 +13,17 @@
 **Image source**: *Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach article presented in the Second ACM International Conference on AI in Finance (ICAIF'21)*
 
 
-## Stack
+## Current Stack
 
 The stack bellow was used mostly due to its ease of installation, configuration, and also efficiency and portability.
 
-* Language: Python (3.8.10)
-* RL Environment: OpenAI gym (0.21.0)
-* RL engine: StableBaselines3 (1.6.0)
+* Language: Python (3.11)
+* RL environment: Gymnasium (0.29.1)
+* RL library: StableBaselines3 (2.3.2)
+* RL engine: Torch (2.4.0)
+
+> **BEWARE: Current stack has diverged from the original stack used for the ITS-SentARL ICAIF'21 version. To use original stack, use git tag `ITS_SentARL-ICAIF21` (instructions at the end of documentation)**
+
 
 ## Pre-installation
 
@@ -71,7 +75,7 @@ Then the arguments according to the desired modes are:
 
 ### Default
 
-* `stg` for selecting the strategy to run. Allows: `bh` for Buy and Hold (BH); `sentarl` fpr the sentiment-aware RL
+* `stg` for selecting the strategy to run. Allows: `bh` for Buy and Hold (BH); `sentarl` for the sentiment-aware RL
   algorithm; `vanilla` for the sentiment-free version of the algorithm.
 * `asset` for selecting the asset to run trade. Allows: any asset present in the `data/__init__.py` file, with the
   corresponding `.csv` file in the `data` folder.
@@ -83,7 +87,7 @@ Then the arguments according to the desired modes are:
 Example to run default mode with ITS-SentARL using A2C
 
 ```bash
-python app mode=single setup=rolling stg=sentarl asset=aapl algo=A2C episodes=1 setup='rolling'
+python app mode=single setup=rolling stg=sentarl asset=aapl algo=A2C episodes=1
 ```
 
 ### Routine
@@ -190,10 +194,23 @@ Reading:
 
 Sentiment extractor module details:
 - [Article](https://www.researchgate.net/publication/339962669_Assessing_Regression-Based_Sentiment_Analysis_Techniques_in_Financial_Texts)
-- [Source code](https://bit.ly/3kzau8G)
+- [Source code](http://bit.ly/4gavU8u)
 
 Financial news webcrawler:
 - [Source code](https://github.com/xicocaio/financial_web_crawler)
+
+### Stack for ITS-SentARL ICAIF'21
+
+* Language: Python (3.7.4)
+* RL environment: Gymnasium (0.18.3)
+* RL library: StableBaselines3 (1.0.0)
+* RL engine: Torch (1.6.0)
+
+Use the `ITS_SentARL-ICAIF21` git tag to get to the exact source
+```bash
+$ git checkout "tags/ITS_SentARL-ICAIF21"
+```
+
 
 ## Acknowledgments
 

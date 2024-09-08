@@ -4,7 +4,7 @@ import settings
 from common import load_dataset
 
 # required imports for proper initialization of env
-from gym.envs.registration import register
+from gymnasium import register
 
 # Default Env Settings
 DEFAULT_ENV = {

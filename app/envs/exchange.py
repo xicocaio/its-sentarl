@@ -1,5 +1,4 @@
-import gym
-from gym.utils import seeding
+import gymnasium as gym
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,12 +10,10 @@ import matplotlib.pyplot as plt
 class ExchangeEnv(gym.Env):
     """Base stock trading environment for OpenAI gym"""
 
-    metadata = {"render.modes": ["human"]}
+    metadata = {"render_modes": ["human"]}
 
     def __init__(self, action_space, observation_space, start_t, end_t):
         super(ExchangeEnv, self).__init__()
-
-        self.seed()
 
         # openAi gym env params
         self.action_space = action_space
@@ -37,10 +34,6 @@ class ExchangeEnv(gym.Env):
         # additional env params
         self.max_episode_steps = self._end_t - (self._start_t - 1)
 
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-
     def step(self, action):
         err_msg = f"{action} ({type(action)}) invalid"
         assert self.action_space.contains(action), err_msg
@@ -57,14 +50,16 @@ class ExchangeEnv(gym.Env):
 
         self._action_value_history.append(self._action_value)
 
-        info = dict(
-            date=self._get_current_date(),
-            step_return=step_return,
-            sharpe_ratio=sr,
-            total_return=self._total_return,
-            total_reward=self._total_reward,
-            action_value=self._action_value,
-        )
+        info = self._get_info(step_return, sr)
+
+        # info = dict(
+        #     date=self._get_current_date(),
+        #     step_return=step_return,
+        #     sharpe_ratio=sr,
+        #     total_return=self._total_return,
+        #     total_reward=self._total_reward,
+        #     action_value=self._action_value,
+        # )
 
         self._update_history(info)
 
@@ -74,9 +69,17 @@ class ExchangeEnv(gym.Env):
             self._episode_over = False
             self._current_t += 1
 
-        return observation, step_reward, self._episode_over, info
+        return (
+            observation,
+            step_reward,
+            self._episode_over,  # Whether reached the terminal state
+            False,  # Truncated: Can be used to end the episode
+            info,
+        )
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
+        super().reset(seed=seed, options=options)
+
         self._episode_over = False
         self._current_t = self._start_t
         self._last_trade_tick = self._current_t - 1
@@ -91,7 +94,7 @@ class ExchangeEnv(gym.Env):
 
         self.history = {}
 
-        return self._get_observation()
+        return self._get_observation(), self._get_info(0, 0)
 
     # This render was not designed to run step by step,
     # it should run only at the end of episode
@@ -105,6 +108,9 @@ class ExchangeEnv(gym.Env):
         raise NotImplementedError
 
     def _calculate_reward(self):
+        return NotImplementedError
+
+    def _get_info(self):
         return NotImplementedError
 
     def _get_observation(self):
