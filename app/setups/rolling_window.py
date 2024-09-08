@@ -99,9 +99,9 @@ class RollingWindowSetup(BaseSetup):
 
             while True:
                 action = self._get_stg_action(env, observation, model)
-                observation, _, done, _, info = env.step(action)
+                observation, _, terminated, _, info = env.step(action)
 
-                if done:
+                if terminated:
                     if self.config.ep_verbose:
                         self.logger.info(info)
                     break

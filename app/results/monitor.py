@@ -76,9 +76,12 @@ class ResultsMonitor(gym.Wrapper):
         fieldnames = TEST_RESULTS_HEADER
         if self.window in ["train", "val"]:
             fieldnames = TRAIN_RESULTS_HEADER
-            additional_info["total_steps"] = self.max_episode_steps
-            additional_info["start_date"] = self.start_date
-            additional_info["end_date"] = self.end_date
+
+            additional_info["total_steps"] = self.get_wrapper_attr(
+                "max_episode_steps"
+            )
+            additional_info["start_date"] = self.get_wrapper_attr("start_date")
+            additional_info["end_date"] = self.get_wrapper_attr("end_date")
 
         self.base_result_values = self._get_base_result_values(additional_info)
 
@@ -115,12 +118,12 @@ class ResultsMonitor(gym.Wrapper):
 
         :param action: (int) the action
         :return: (Tuple[np.ndarray, float, bool, Dict[Any, Any]]) observation,
-            reward, done, information
+            reward, terminated, information
         """
         if self.needs_reset:
             raise RuntimeError("Tried to step environment that needs reset")
 
-        observation, reward, done, _, info = self.env.step(action)
+        observation, reward, terminated, _, info = self.env.step(action)
         self.rewards.append(reward)
         self.total_steps += 1
 
@@ -134,7 +137,7 @@ class ResultsMonitor(gym.Wrapper):
                 {**self.base_result_values, **result_values, **info}
             )
 
-        if done:
+        if terminated:
             self.current_episode += 1
             if self.window in ["train", "val"]:
                 self.needs_reset = True
@@ -157,7 +160,7 @@ class ResultsMonitor(gym.Wrapper):
                         {**self.base_result_values, **ep_info, **result_values}
                     )
 
-        return observation, reward, done, False, info
+        return observation, reward, terminated, False, info
 
     def close(self):
         """

@@ -13,14 +13,16 @@
 **Image source**: *Intelligent Trading Systems: A Sentiment-Aware Reinforcement Learning Approach article presented in the Second ACM International Conference on AI in Finance (ICAIF'21)*
 
 
-## Stack
+## Current Stack
 
 The stack bellow was used mostly due to its ease of installation, configuration, and also efficiency and portability.
 
-* Language: Python (3.8.10)
+* Language: Python (3.11)
 * RL environment: Gymnasium (0.29.1)
 * RL library: StableBaselines3 (2.3.2)
 * RL engine: Torch (2.4.0)
+
+> **BEWARE: Current stack has diverged from the original stack used for the ITS-SentARL ICAIF'21 version. To use original stack, use git tag `ITS_SentARL-ICAIF21` (instructions at the end of documentation)**
 
 
 ## Pre-installation
@@ -196,6 +198,19 @@ Sentiment extractor module details:
 
 Financial news webcrawler:
 - [Source code](https://github.com/xicocaio/financial_web_crawler)
+
+### Stack for ITS-SentARL ICAIF'21
+
+* Language: Python (3.7.4)
+* RL environment: Gymnasium (0.18.3)
+* RL library: StableBaselines3 (1.0.0)
+* RL engine: Torch (1.6.0)
+
+Use the `ITS_SentARL-ICAIF21` git tag to get to the exact source
+```bash
+$ git checkout "tags/ITS_SentARL-ICAIF21"
+```
+
 
 ## Acknowledgments
 

@@ -76,7 +76,7 @@ def train_model(
     window_roll: int
         The number of window rolls to execute
     overwrite_file: bool
-        Wheter to overwrite model files
+        Wheter to overwrite result and model files
     save_model: bool
         Wheter to save models at each episode
     Returns:
@@ -96,7 +96,7 @@ def train_model(
     # and given that most present code adopts gymnasium standards,
     # where there is a connection between SB3 and gym, SB3 env should be
     # wrapped into SB3 wrappers to avoid issues with reward syncronization
-    # for more information:
+    # For more information:
     # https://stable-baselines3.readthedocs.io/en/master/guide/vec_envs.html#vecenv-api-vs-gym-api
     sb3monitor = SB3Monitor(env_val)
 
